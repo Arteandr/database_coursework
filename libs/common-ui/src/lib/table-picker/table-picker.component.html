@@ -1,0 +1,7 @@
+<mat-form-field appearance='fill' color='accent'>
+  <mat-label>Таблица</mat-label>
+  <mat-select (valueChange)='onSelectedValueChange($event)'
+              [value]='selected$ | async'>
+    <mat-option *ngFor='let option of options; index as i' [value]='option'>{{option}}</mat-option>
+  </mat-select>
+</mat-form-field>

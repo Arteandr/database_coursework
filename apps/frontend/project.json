@@ -26,6 +26,7 @@
           "apps/frontend/src/assets"
         ],
         "styles": [
+          "@angular/material/prebuilt-themes/pink-bluegrey.css",
           "apps/frontend/src/styles.scss"
         ],
         "scripts": []
@@ -67,7 +68,10 @@
           "browserTarget": "frontend:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/frontend/proxy.conf.json"
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

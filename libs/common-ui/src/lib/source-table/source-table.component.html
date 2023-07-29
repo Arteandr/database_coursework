@@ -1,0 +1,29 @@
+<!--<ng-container *ngIf='(loading$ | async) === false; else elseBlock'>-->
+<div *ngIf='(loading$ | async) === false; else elseBlock' id='table-out'>
+  <table [dataSource]='dataSource' class='mat-elevation-z'
+         mat-table>
+
+    <!-- Position Column -->
+    <ng-container matColumnDef='name'>
+      <th *matHeaderCellDef mat-header-cell> Name</th>
+      <td *matCellDef='let element' mat-cell> {{element.name}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container class='paginator' matColumnDef='age'>
+      <th *matHeaderCellDef mat-header-cell> age</th>
+      <td *matCellDef='let element' mat-cell> {{element.age}} </td>
+    </ng-container>
+
+
+    <tr *matHeaderRowDef='displayedColumns' mat-header-row></tr>
+    <tr *matRowDef='let row; columns: displayedColumns;' mat-row></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]='[5, 10, 20]' [pageSize]='5'
+                 showFirstLastButtons>
+  </mat-paginator>
+  <!--  <bd-paginator #paginator></bd-paginator>-->
+</div>
+<ng-template #elseBlock>
+  <mat-progress-spinner color='accent' mode='indeterminate'></mat-progress-spinner>
+</ng-template>

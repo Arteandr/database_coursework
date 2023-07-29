@@ -1,0 +1,9 @@
+schema: './src/app/app.graphql'
+documents: '**/*.graphql'
+extensions:
+  endpoints:
+    "default":
+      url: http://localhost:3000/graphql
+      headers:
+        user-agent: "JS GRAPHQL"
+      introspect: false

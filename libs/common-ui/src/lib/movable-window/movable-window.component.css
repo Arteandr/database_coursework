@@ -1,0 +1,59 @@
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.movable {
+  display: inline-block;
+  border-radius: 10px;
+  background-color: dimgray;
+  position: absolute;
+}
+
+.resizable {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 10px;
+  width: 10px;
+  cursor: nwse-resize;
+  z-index: 3;
+}
+
+header {
+  cursor: pointer;
+  position: relative;
+  height: 20px;
+  width: 100%;
+  background-color: grey;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-bottom: 1px solid #4a4a4a;
+  z-index: 2;
+}
+
+main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+/*# sourceMappingURL=movable-window.component.css.map */

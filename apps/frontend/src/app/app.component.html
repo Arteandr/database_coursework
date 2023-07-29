@@ -1,1 +1,8 @@
-<bd-nx-welcome></bd-nx-welcome> <router-outlet></router-outlet>
+<div id='table-section'>
+  <bd-movable-window>
+    <div class='main-table'>
+      <bd-table-picker (changeEvent)='onCurrentTableChange($event)'></bd-table-picker>
+      <bd-source-table [currentTable$]='selected$' id='table'></bd-source-table>
+    </div>
+  </bd-movable-window>
+</div>
