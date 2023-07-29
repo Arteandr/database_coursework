@@ -11,6 +11,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MovableWindowComponent } from "./movable-window/movable-window.component";
 import { CdkDrag, CdkDragHandle } from "@angular/cdk/drag-drop";
+import { DockComponent } from "./dock/dock.component";
+import { MatIconModule } from "@angular/material/icon";
 
 @NgModule({
   imports: [
@@ -25,8 +27,9 @@ import { CdkDrag, CdkDragHandle } from "@angular/cdk/drag-drop";
     MatProgressSpinnerModule,
     CdkDrag,
     CdkDragHandle,
+    MatIconModule,
   ],
-  declarations: [SourceTableComponent, TablePickerComponent, MovableWindowComponent],
-  exports: [SourceTableComponent, TablePickerComponent, MovableWindowComponent],
+  declarations: [SourceTableComponent, TablePickerComponent, MovableWindowComponent, DockComponent],
+  exports: [SourceTableComponent, TablePickerComponent, MovableWindowComponent, DockComponent],
 })
 export class CommonUiModule {}

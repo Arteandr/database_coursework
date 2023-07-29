@@ -7,3 +7,5 @@ export * from "./lib/table-picker/table-picker.component";
 export * from "./lib/custom-paginator/custom-paginator.component";
 
 export * from "./lib/movable-window/movable-window.component";
+
+export * from "./lib/dock/dock.component";

@@ -1,0 +1,13 @@
+#dock {
+  position: absolute;
+  width: 150px;
+  display: flex;
+  bottom: 20px;
+  justify-content: space-around;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
+
+/*# sourceMappingURL=dock.component.css.map */
