@@ -9,12 +9,15 @@ import { fromEvent, map, Observable, switchMap, takeUntil } from "rxjs";
 export class MovableWindowComponent implements AfterViewInit {
   @ViewChild("header", { static: false }) headerEl: ElementRef<HTMLElement> | undefined;
   @ViewChild("movable", { static: false }) movableEl: ElementRef<HTMLDivElement> | undefined;
-
   private mouseUp$: Observable<MouseEvent> = fromEvent<MouseEvent>(document, "mouseup");
   private mouseMove$: Observable<MouseEvent> = fromEvent<MouseEvent>(document, "mousemove");
 
   ngAfterViewInit() {
     this.initDrag();
+  }
+
+  onCloseButtonClick(event: Event) {
+    this.movableEl?.nativeElement.closest("bd-movable-window")?.remove();
   }
 
   private initDrag() {

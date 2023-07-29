@@ -1,5 +1,7 @@
 <div #movable class='movable noselect'>
-  <header #header></header>
+  <header #header>
+    <button #close (click)='onCloseButtonClick($event)' class='close' mat-fab></button>
+  </header>
   <main>
     <div>
       <ng-content></ng-content>

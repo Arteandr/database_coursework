@@ -15,6 +15,11 @@ $background: black;
   border-radius: 10px;
   background-color: darken(grey, 9);
   position: absolute;
+  border: 1px solid transparent;
+}
+
+.movable:hover {
+  border: 1px solid lighten(white, 9);
 }
 
 .resizable {
@@ -35,6 +40,16 @@ header {
   background-color: grey;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+header .close {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: rgb(255, 105, 97);
+  left: 5px
 }
 
 header::after {

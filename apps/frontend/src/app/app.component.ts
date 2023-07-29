@@ -40,25 +40,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log("after init");
     this.sortNodes();
   }
-
-  // private sortNodes() {
-  //   if (!this.windowsDiv) return;
-  //   const nodes = this.windowsDiv.nativeElement.querySelectorAll("bd-movable-window");
-  //   let amount = 0;
-  //   for (let i = 1; i < nodes.length; i++) {
-  //     const node = nodes[i];
-  //     const prevNode = nodes[i];
-  //     console.log("PREV:", prevNode);
-  //     const prevWidth = prevNode.querySelector<HTMLDivElement>(".movable")?.offsetWidth;
-  //     const movableDiv = node.querySelector<HTMLDivElement>(".movable");
-  //     if (!movableDiv || !prevWidth) continue;
-  //     movableDiv.style.left = `${amount + prevWidth + 10}px`;
-  //     amount += prevWidth;
-  //   }
-  // }
 
   private sortNodes() {
     if (!this.windowsDiv) return;
@@ -69,7 +52,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       const movableDiv = node.querySelector<HTMLDivElement>(".movable");
       if (!movableDiv) continue;
       movableDiv.style.left = `${amount + (i === 0 ? 0 : 5)}px`;
-      movableDiv.style.top = `40px`;
+      movableDiv.style.top = `50px`;
       amount += movableDiv.offsetWidth;
     }
   }
