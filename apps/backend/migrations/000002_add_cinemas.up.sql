@@ -19,6 +19,13 @@ create table session_types
   ration decimal            not null
 );
 
+insert into session_types(name, ration)
+values ('утренний', 0.6);
+insert into session_types(name, ration)
+values ('дневной', 1);
+insert into session_types(name, ration)
+values ('вечерний', 1.4);
+
 create table sessions
 (
   id            serial primary key                not null unique,
