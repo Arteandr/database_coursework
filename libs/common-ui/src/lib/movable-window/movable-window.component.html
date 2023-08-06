@@ -1,4 +1,4 @@
-<div #movable class='movable noselect'>
+<div #movable (click)='onWindowClick()' [style.z-index]='zIndex' class='movable noselect'>
   <header #header>
     <button #close (click)='onCloseButtonClick($event)' class='close' mat-fab></button>
   </header>

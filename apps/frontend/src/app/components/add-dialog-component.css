@@ -1,0 +1,17 @@
+#actions {
+  display: flex;
+  justify-content: center;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#content > button:not(#content:last-child) {
+  margin-bottom: 10px;
+}
+
+/*# sourceMappingURL=add-dialog-component.css.map */

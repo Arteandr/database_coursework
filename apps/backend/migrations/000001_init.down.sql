@@ -1,0 +1,11 @@
+drop table sessions;
+drop table cinemas;
+drop table districts;
+drop table cinema_types;
+drop table session_types;
+drop table films;
+drop table directors;
+drop table film_qualities;
+drop table studios;
+drop table countries;
+drop domain year;

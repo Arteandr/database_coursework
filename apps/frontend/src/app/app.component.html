@@ -2,18 +2,19 @@
   <h2>Курсовая работа на тему Книги</h2>
 </nav>
 <div #windows id='window-section'>
-  <bd-movable-window>
-    <div class='main-table'>
-      <bd-table-picker (changeEvent)='onCurrentTableChange($event)'></bd-table-picker>
-      <bd-source-table [currentTable$]='selected$' id='table'></bd-source-table>
-    </div>
-  </bd-movable-window>
-  <bd-movable-window>
-    <div class='main-table'>
-      <bd-table-picker (changeEvent)='onCurrentTableChange($event)'></bd-table-picker>
-      <bd-source-table [currentTable$]='selected$' id='table2'></bd-source-table>
-    </div>
-  </bd-movable-window>
+  <!--  <bd-movable-window>-->
+  <!--    <div class='main-table'>-->
+  <!--      <bd-table-picker (changeEvent)='onCurrentTableChange($event)'></bd-table-picker>-->
+  <!--      <bd-source-table [currentTable$]='selected$' id='table'></bd-source-table>-->
+  <!--    </div>-->
+  <!--  </bd-movable-window>-->
+  <!--  <bd-movable-window>-->
+  <!--    <div class='main-table'>-->
+  <!--      <bd-table-picker (changeEvent)='onCurrentTableChange($event)'></bd-table-picker>-->
+  <!--      <bd-source-table [currentTable$]='selected$' id='table2'></bd-source-table>-->
+  <!--    </div>-->
+  <!--  </bd-movable-window>-->
+  <ng-template #container></ng-template>
 </div>
 
-<bd-dock (sortButtonClick)='onSortClick($event)'></bd-dock>
+<bd-dock (addButtonClick)='onAddClick($event)' (sortButtonClick)='onSortClick($event)'></bd-dock>

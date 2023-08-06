@@ -13,6 +13,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatPaginatorIntl, MatPaginatorModule } from "@angular/material/paginator";
 import { CommonUiModule, CustomPaginatorIntl } from "@bd/common-ui";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MainTableComponent } from "./components/main-table.component";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [AppComponent, NxWelcomeComponent],
@@ -28,6 +30,8 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatPaginatorModule,
     CommonUiModule,
     MatProgressBarModule,
+    MainTableComponent,
+    MatDialogModule,
   ],
   providers: [
     {

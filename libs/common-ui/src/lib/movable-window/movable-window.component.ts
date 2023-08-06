@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { fromEvent, map, Observable, switchMap, takeUntil } from "rxjs";
 
 @Component({
@@ -7,6 +15,8 @@ import { fromEvent, map, Observable, switchMap, takeUntil } from "rxjs";
   styleUrls: ["./movable-window.component.scss"],
 })
 export class MovableWindowComponent implements AfterViewInit {
+  @Output() windowClick = new EventEmitter<boolean>();
+  @Input() zIndex = 0;
   @ViewChild("header", { static: false }) headerEl: ElementRef<HTMLElement> | undefined;
   @ViewChild("movable", { static: false }) movableEl: ElementRef<HTMLDivElement> | undefined;
   private mouseUp$: Observable<MouseEvent> = fromEvent<MouseEvent>(document, "mouseup");
@@ -14,6 +24,10 @@ export class MovableWindowComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.initDrag();
+  }
+
+  onWindowClick() {
+    this.windowClick.emit(true);
   }
 
   onCloseButtonClick(event: Event) {
@@ -40,6 +54,7 @@ export class MovableWindowComponent implements AfterViewInit {
     );
 
     dragMove$.subscribe((move) => {
+      this.windowClick.emit(true);
       const offsetX = move.originalEvent.x - move.startOffsetX;
       const offsetY = move.originalEvent.y - move.startOffsetY;
       if (!this.movableEl) return;
