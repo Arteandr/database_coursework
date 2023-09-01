@@ -1,5 +1,5 @@
 import { DatabaseError, Pool } from "pg";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -31,17 +31,33 @@ export class Repository {
     });
   }
 
-  async query(q: string, params: any[] = []) {
-    q = this.parseQueryString(q);
+  async query<T extends object>(
+    q: string,
+    params: any[] = [],
+    ctor: new (obj: object) => T = null,
+    returning = true,
+  ): Promise<T[]> {
+    if (!this._tableName) throw new Error("Ошибка БД: не указана таблица для работы");
+    q = this.parseQueryString(q, returning);
+
+    Logger.debug(q);
+
     try {
-      const response = await this._pool.query(q, params);
+      const result = await this._pool.query(q, params);
+      const rows = result.rows;
+      if (ctor) return rows.map((row) => new ctor(row));
+      else return rows;
     } catch (error) {
       new DBError(error).throwError();
     }
   }
 
-  private parseQueryString(q: string): string {
-    return q.trim().replace("%t", this._tableName);
+  private parseQueryString(q: string, returning: boolean): string {
+    q = q.trim();
+    const command = q.split(" ")[0];
+    return (
+      q.replace("%t", this._tableName) + (returning && command !== "SELECT" ? ` RETURNING *` : ``)
+    );
   }
 }
 
@@ -53,6 +69,7 @@ class DBError {
   }
 
   throwError() {
+    console.table(this._error);
     switch (this._error.code) {
       case "23505":
         throw new Error(this.keysError());
