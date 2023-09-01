@@ -1,5 +1,0 @@
-# This file was generated. Do not edit manually.
-
-type Query {
-  test: String
-}
