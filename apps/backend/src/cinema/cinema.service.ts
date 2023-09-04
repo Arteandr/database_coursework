@@ -1,5 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { UpdateCinemaInput } from "./dto/update-cinema.input";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { UpdateCinemaDto } from "./dto/update-cinema.input";
 import { PG_CONNECTION } from "../database/database.module";
 import { Repository } from "../repositories/repository";
 import { CreateCinemaDto } from "./dto/create-cinema.input";
@@ -35,19 +35,58 @@ export class CinemaService {
     return cinema;
   }
 
-  findAll() {
-    return `This action returns all cinema`;
+  async getAll() {
+    const cinemas = await this.database.query(
+      `SELECT *
+       FROM %t
+       ORDER BY id DESC`,
+      null,
+      CinemaEntity,
+    );
+
+    return cinemas;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cinema`;
+  async getOne(id: number) {
+    const cinema = (
+      await this.database.query(
+        `SELECT *
+         FROM %t
+         WHERE id=$1`,
+        [id],
+        CinemaEntity,
+      )
+    )[0];
+
+    return cinema;
   }
 
-  update(id: number, updateCinemaInput: UpdateCinemaInput) {
-    return `This action updates a #${id} cinema`;
+  async update(id: number, dto: UpdateCinemaDto) {
+    const params = [];
+    const keys = Object.entries(dto).map((value, i) => {
+      params.push(value[1]);
+      return `${value[0]}=$${i + 2}`;
+    });
+    const cinema = (
+      await this.database.query(
+        `UPDATE %t
+        SET ${keys}
+          WHERE id=$1`,
+        [id].concat(params),
+        CinemaEntity,
+      )
+    )[0];
+    // TODO
+    if (!cinema) throw new HttpException("Такого кинотеатра не существует", HttpStatus.NOT_FOUND);
+
+    return cinema;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cinema`;
+  async remove(id: number) {
+    const cinema = await this.getOne(id);
+    if (!cinema) throw new HttpException("Такого кинотеатра не существует", HttpStatus.NOT_FOUND);
+    const response = await this.database.query("DELETE FROM %t WHERE id=$1", [id]);
+
+    return response;
   }
 }

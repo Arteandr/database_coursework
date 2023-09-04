@@ -16,7 +16,6 @@ export class ValidationPipe implements PipeTransform<any> {
     if (metadata.metatype.toString() == "function Object() { [native code] }") return value;
 
     const errors = await validate(obj);
-    console.log(errors);
     if (errors.length) {
       const messages = {};
       errors.forEach((err) => (messages[err.property] = Object.values(err.constraints)));
