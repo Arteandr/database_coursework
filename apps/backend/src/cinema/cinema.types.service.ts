@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { PG_CONNECTION } from "../database/database.module";
 import { NameDto } from "../shared/dto/name.dto";
 import { Repository } from "../repositories/repository";
-import { CinemaType } from "../entities/cinema";
+import { CinemaTypeEntity } from "../entities/cinema";
 
 @Injectable()
 export class CinemaTypesService {
@@ -12,10 +12,10 @@ export class CinemaTypesService {
 
   async create(dto: NameDto) {
     const cinemaType = (
-      await this.database.query<CinemaType>(
+      await this.database.query<CinemaTypeEntity>(
         `INSERT INTO %t (name) VALUES ($1)`,
         [dto.name],
-        CinemaType,
+        CinemaTypeEntity,
       )
     )[0];
 
@@ -23,10 +23,10 @@ export class CinemaTypesService {
   }
 
   async getAll() {
-    const cinemaTypes = await this.database.query<CinemaType>(
+    const cinemaTypes = await this.database.query<CinemaTypeEntity>(
       `SELECT * FROM %t ORDER BY id DESC`,
       null,
-      CinemaType,
+      CinemaTypeEntity,
     );
 
     return cinemaTypes;
@@ -34,7 +34,7 @@ export class CinemaTypesService {
 
   async getOne(id: number) {
     const cinemaType = (
-      await this.database.query(`SELECT * FROM %t WHERE id=$1`, [id], CinemaType)
+      await this.database.query(`SELECT * FROM %t WHERE id=$1`, [id], CinemaTypeEntity)
     )[0];
 
     return cinemaType;
@@ -42,7 +42,11 @@ export class CinemaTypesService {
 
   async update(id: number, dto: NameDto) {
     const cinemaType = (
-      await this.database.query(`UPDATE %t SET name=$1 WHERE id=$2`, [dto.name, id], CinemaType)
+      await this.database.query(
+        `UPDATE %t SET name=$1 WHERE id=$2`,
+        [dto.name, id],
+        CinemaTypeEntity,
+      )
     )[0];
 
     return cinemaType;

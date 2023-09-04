@@ -72,7 +72,9 @@ class DBError {
     console.table(this._error);
     switch (this._error.code) {
       case "23505":
-        throw new Error(this.keysError());
+        throw new Error(this.uniqueKeysError());
+      case "23503":
+        throw new Error(this.undefinedKeysError());
       default:
         throw new Error("Ошибка БД: " + this._error.message);
     }
@@ -91,10 +93,17 @@ class DBError {
     return result;
   }
 
-  private keysError(): string {
+  private uniqueKeysError(): string {
     const keys = Object.keys(this.parseKeys());
     return `Значения для ${keys.map((k) => k)} таблицы ${
       this._error.table
     } должны быть уникальными`;
+  }
+
+  private undefinedKeysError(): string {
+    const keys = Object.entries(this.parseKeys());
+    return `Не верно указан внешний ключ: ${keys.map(
+      (k) => `${k[0]}=${k[1]}`,
+    )} при взаимодействии с таблицей ${this._error.table}`;
   }
 }
