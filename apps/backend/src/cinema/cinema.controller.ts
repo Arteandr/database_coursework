@@ -39,6 +39,7 @@ export class CinemaController {
   @Get("/:id")
   async getCinema(@Param("id", new ParseIntPipe()) id: number) {
     const cinema = await this.cinemaService.getOne(id);
+    if (!cinema) throw CinemaController.NotFound;
 
     return new CustomResponse(cinema);
   }

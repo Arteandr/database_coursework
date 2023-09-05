@@ -4,6 +4,7 @@ import { PG_CONNECTION } from "../database/database.module";
 import { Repository } from "../repositories/repository";
 import { CreateCinemaDto } from "./dto/create-cinema.input";
 import { CinemaEntity } from "../entities/cinema";
+import { Utils } from "../shared/utils";
 
 @Injectable()
 export class CinemaService {
@@ -62,11 +63,7 @@ export class CinemaService {
   }
 
   async update(id: number, dto: UpdateCinemaDto) {
-    const params = [];
-    const keys = Object.entries(dto).map((value, i) => {
-      params.push(value[1]);
-      return `${value[0]}=$${i + 2}`;
-    });
+    const { params, keys } = Utils.MakeSetValue(dto);
     const cinema = (
       await this.database.query(
         `UPDATE %t
@@ -85,7 +82,12 @@ export class CinemaService {
   async remove(id: number) {
     const cinema = await this.getOne(id);
     if (!cinema) throw new HttpException("Такого кинотеатра не существует", HttpStatus.NOT_FOUND);
-    const response = await this.database.query("DELETE FROM %t WHERE id=$1", [id]);
+    const response = await this.database.query(
+      `DELETE
+       FROM %t
+       WHERE id=$1`,
+      [id],
+    );
 
     return response;
   }

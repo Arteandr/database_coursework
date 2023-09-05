@@ -64,6 +64,8 @@ export class CountriesService {
   }
 
   async remove(id: number) {
+    const country = await this.getOne(id);
+    if (!country) throw new HttpException("Такой страны не существует", HttpStatus.NOT_FOUND);
     const response = await this.database.query("DELETE FROM %t WHERE id=$1", [id]);
 
     return true;

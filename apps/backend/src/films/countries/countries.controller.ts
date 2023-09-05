@@ -8,8 +8,8 @@ import {
   Inject,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
+  Put,
 } from "@nestjs/common";
 import { CountriesService } from "./countries.service";
 import { NameDto } from "../../shared/dto/name.dto";
@@ -38,13 +38,14 @@ export class CountriesController {
   @Get(":id")
   async getOne(@Param("id", new ParseIntPipe()) id: number) {
     const country = await this.countriesService.getOne(id);
+    if (!country) throw CountriesController.NotFound;
 
     return new CustomResponse(country);
   }
 
-  @Patch(":id")
+  @Put(":id")
   async update(@Param("id", new ParseIntPipe()) id: number, @Body() dto: NameDto) {
-    const country = await this.countriesService.update(+id, dto);
+    const country = await this.countriesService.update(id, dto);
 
     return new CustomResponse(country);
   }
