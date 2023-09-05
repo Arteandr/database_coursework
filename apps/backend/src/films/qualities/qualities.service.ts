@@ -6,7 +6,9 @@ import { QualityEntity } from "../../entities/films";
 
 @Injectable()
 export class QualitiesService {
-  constructor(@Inject(PG_CONNECTION) private readonly database: Repository) {}
+  constructor(@Inject(PG_CONNECTION) private readonly database: Repository) {
+    this.database.tableName = "film_qualities";
+  }
 
   async create(dto: NameDto) {
     const quality = (

@@ -21,4 +21,8 @@ export class StudioEntity {
 export class QualityEntity {
   private id: number;
   private name: string;
+
+  constructor(object: object) {
+    Object.assign(this, object);
+  }
 }

@@ -24,20 +24,21 @@ export class QualitiesController {
   @Post()
   async create(@Body() dto: NameDto) {
     const quality = await this.qualitiesService.create(dto);
+    console.log(quality);
 
     return new CustomResponse(quality, HttpStatus.CREATED);
   }
 
   @Get()
   async getAll() {
-    const qualities = this.qualitiesService.getAll();
+    const qualities = await this.qualitiesService.getAll();
 
     return new CustomResponse(qualities);
   }
 
   @Get(":id")
   async getOne(@Param("id", new ParseIntPipe()) id: number) {
-    const quality = this.qualitiesService.getOne(+id);
+    const quality = await this.qualitiesService.getOne(+id);
     if (!quality) throw QualitiesController.NotFound;
 
     return new CustomResponse(quality);
