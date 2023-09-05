@@ -17,3 +17,8 @@ export class StudioEntity {
     Object.assign(this, object);
   }
 }
+
+export class QualityEntity {
+  private id: number;
+  private name: string;
+}
