@@ -1,34 +1,64 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { DirectorsService } from './directors.service';
-import { CreateDirectorDto } from './dto/create-director.dto';
-import { UpdateDirectorDto } from './dto/update-director.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+} from "@nestjs/common";
+import { DirectorsService } from "./directors.service";
+import { CreateDirectorDto } from "./dto/create-director.dto";
+import { UpdateDirectorDto } from "./dto/update-director.dto";
+import { CustomResponse } from "../../shared/response";
 
-@Controller('directors')
+@Controller("/films/directors")
 export class DirectorsController {
-  constructor(private readonly directorsService: DirectorsService) {}
+  static NotFound = new HttpException("Такого режиссера не существует", HttpStatus.NOT_FOUND);
+
+  constructor(@Inject(DirectorsService) private readonly directorsService: DirectorsService) {}
 
   @Post()
-  create(@Body() createDirectorDto: CreateDirectorDto) {
-    return this.directorsService.create(createDirectorDto);
+  async create(@Body() createDirectorDto: CreateDirectorDto) {
+    const director = await this.directorsService.create(createDirectorDto);
+
+    return new CustomResponse(director, HttpStatus.CREATED);
   }
 
   @Get()
-  findAll() {
-    return this.directorsService.findAll();
+  async getAll() {
+    const directors = await this.directorsService.getAll();
+
+    return new CustomResponse(directors);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.directorsService.findOne(+id);
+  @Get(":id")
+  async getOne(@Param("id", new ParseIntPipe()) id: number) {
+    const director = await this.directorsService.getOne(id);
+    if (!director) throw DirectorsController.NotFound;
+
+    return new CustomResponse(director);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDirectorDto: UpdateDirectorDto) {
-    return this.directorsService.update(+id, updateDirectorDto);
+  @Put(":id")
+  async update(
+    @Param("id", new ParseIntPipe()) id: number,
+    @Body() updateDirectorDto: UpdateDirectorDto,
+  ) {
+    const director = await this.directorsService.update(id, updateDirectorDto);
+
+    return new CustomResponse(director);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.directorsService.remove(+id);
+  @Delete(":id")
+  async remove(@Param("id", new ParseIntPipe()) id: number) {
+    const director = await this.directorsService.remove(id);
+    if (!director) throw DirectorsController.NotFound;
+
+    return CustomResponse.Success();
   }
 }

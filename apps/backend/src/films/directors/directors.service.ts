@@ -1,26 +1,82 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDirectorDto } from './dto/create-director.dto';
-import { UpdateDirectorDto } from './dto/update-director.dto';
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { CreateDirectorDto } from "./dto/create-director.dto";
+import { UpdateDirectorDto } from "./dto/update-director.dto";
+import { PG_CONNECTION } from "../../database/database.module";
+import { Repository } from "../../repositories/repository";
+import { DirectorEntity } from "../../entities/films";
+import { Utils } from "../../shared/utils";
 
 @Injectable()
 export class DirectorsService {
-  create(createDirectorDto: CreateDirectorDto) {
-    return 'This action adds a new director';
+  constructor(@Inject(PG_CONNECTION) private readonly database: Repository) {
+    this.database.tableName = "directors";
   }
 
-  findAll() {
-    return `This action returns all directors`;
+  async create(dto: CreateDirectorDto) {
+    const director = (
+      await this.database.query(
+        `INSERT INTO %t (firstName, lastName)
+        VALUES ($1, $2)`,
+        [dto.firstName, dto.lastName],
+        DirectorEntity,
+      )
+    )[0];
+
+    return director;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} director`;
+  async getAll() {
+    const directors = await this.database.query(
+      `SELECT *
+       FROM %t
+       ORDER BY id DESC`,
+      null,
+      DirectorEntity,
+    );
+
+    return directors;
   }
 
-  update(id: number, updateDirectorDto: UpdateDirectorDto) {
-    return `This action updates a #${id} director`;
+  async getOne(id: number) {
+    const director = (
+      await this.database.query(
+        `SELECT *
+         FROM %t
+         WHERE id=$1`,
+        [id],
+        DirectorEntity,
+      )
+    )[0];
+
+    return director;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} director`;
+  async update(id: number, dto: UpdateDirectorDto) {
+    const { params, keys } = Utils.MakeSetValue(dto);
+    const director = (
+      await this.database.query(
+        `UPDATE %t
+        SET ${keys}
+          WHERE id=$1`,
+        [id].concat(params),
+        DirectorEntity,
+      )
+    )[0];
+    if (!director) throw new HttpException("Такого режиссера не существует", HttpStatus.NOT_FOUND);
+
+    return director;
+  }
+
+  async remove(id: number) {
+    const director = await this.getOne(id);
+    if (!director) throw new HttpException("Такого режиссера не существует", HttpStatus.NOT_FOUND);
+    const response = await this.database.query(
+      `DELETE
+       FROM %t
+       WHERE id=$1`,
+      [id],
+    );
+
+    return response;
   }
 }

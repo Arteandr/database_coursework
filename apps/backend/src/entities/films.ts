@@ -26,3 +26,13 @@ export class QualityEntity {
     Object.assign(this, object);
   }
 }
+
+export class DirectorEntity {
+  private id: number;
+  private firstName: string;
+  private lastName: string;
+
+  constructor(object: object) {
+    Object.assign(this, object);
+  }
+}
