@@ -1,3 +1,19 @@
+export class FilmEntity {
+  private id: number;
+  private name: string;
+  private description: string;
+  private photo: string;
+  private creationYear: number;
+  private duration: number;
+  private directorId: number;
+  private qualityId: number;
+  private studioId: number;
+
+  constructor(object: object) {
+    Object.assign(this, object);
+  }
+}
+
 export class CountryEntity {
   private id: number;
   private name: string;
