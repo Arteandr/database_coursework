@@ -15,7 +15,7 @@ import { CountriesService } from "./countries.service";
 import { NameDto } from "../../shared/dto/name.dto";
 import { CustomResponse } from "../../shared/response";
 
-@Controller("/films/countries")
+@Controller("/countries")
 export class CountriesController {
   static NotFound = new HttpException("Такой страны не существует", HttpStatus.NOT_FOUND);
 

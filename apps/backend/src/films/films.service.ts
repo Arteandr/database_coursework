@@ -66,7 +66,7 @@ export class FilmsService {
     const film = (
       await this.database.query(
         `UPDATE %t
-        SET ${keys} WHER id=$1`,
+        SET ${keys} WHERE id=$1`,
         [id].concat(params),
         FilmEntity,
       )

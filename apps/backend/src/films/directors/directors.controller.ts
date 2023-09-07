@@ -16,7 +16,7 @@ import { CreateDirectorDto } from "./dto/create-director.dto";
 import { UpdateDirectorDto } from "./dto/update-director.dto";
 import { CustomResponse } from "../../shared/response";
 
-@Controller("/films/directors")
+@Controller("/directors")
 export class DirectorsController {
   static NotFound = new HttpException("Такого режиссера не существует", HttpStatus.NOT_FOUND);
 

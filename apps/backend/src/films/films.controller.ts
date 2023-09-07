@@ -29,6 +29,13 @@ export class FilmsController {
     return new CustomResponse(films, HttpStatus.CREATED);
   }
 
+  @Get()
+  async getAll() {
+    const films = await this.filmsService.getAll();
+
+    return new CustomResponse(films);
+  }
+
   @Get(":id")
   async getOne(@Param("id", new ParseIntPipe()) id: number) {
     const film = await this.filmsService.getOne(id);

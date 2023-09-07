@@ -5,9 +5,11 @@ import { QualitiesModule } from "./qualities/qualities.module";
 import { DirectorsModule } from "./directors/directors.module";
 import { FilmsService } from "./films.service";
 import { DatabaseModule } from "../database/database.module";
+import { FilmsController } from "./films.controller";
 
 @Module({
   imports: [DatabaseModule, CountriesModule, StudiosModule, QualitiesModule, DirectorsModule],
+  controllers: [FilmsController],
   providers: [FilmsService],
 })
 export class FilmsModule {}

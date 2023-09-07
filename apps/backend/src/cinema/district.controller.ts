@@ -15,7 +15,7 @@ import { NameDto } from "../shared/dto/name.dto";
 import { CustomResponse } from "../shared/response";
 import { DistrictService } from "./district.service";
 
-@Controller("/cinemas/districts")
+@Controller("/districts")
 export class DistrictController {
   static NotFound = new HttpException("Такого района не существует", HttpStatus.NOT_FOUND);
 

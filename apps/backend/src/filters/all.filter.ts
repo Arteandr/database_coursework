@@ -7,7 +7,6 @@ export class AllFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: any, host: ArgumentsHost) {
-    console.log(exception);
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const ctx = host.switchToHttp();
     const httpStatus =

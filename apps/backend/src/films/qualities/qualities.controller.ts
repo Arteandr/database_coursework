@@ -15,7 +15,7 @@ import { QualitiesService } from "./qualities.service";
 import { NameDto } from "../../shared/dto/name.dto";
 import { CustomResponse } from "../../shared/response";
 
-@Controller("/films/qualities")
+@Controller("/qualities")
 export class QualitiesController {
   static NotFound = new HttpException("Такого качества не существует", HttpStatus.NOT_FOUND);
 

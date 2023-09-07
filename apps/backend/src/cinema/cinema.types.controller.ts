@@ -15,7 +15,7 @@ import { NameDto } from "../shared/dto/name.dto";
 import { CustomResponse } from "../shared/response";
 import { CinemaTypesService } from "./cinema.types.service";
 
-@Controller("/cinemas/types")
+@Controller("/cinemaTypes")
 export class CinemaTypesController {
   static NotFound = new HttpException("Такого типа кинотеатра не существует", HttpStatus.NOT_FOUND);
 
