@@ -13,5 +13,6 @@ import { CinemaTypesModule } from "./types/cinema.types.module";
   imports: [DatabaseModule, DistrictModule, CinemaTypesModule],
   controllers: [CinemaController, CinemaTypesController, DistrictController],
   providers: [DistrictService, CinemaTypesService, CinemaService],
+  exports: [CinemaService],
 })
 export class CinemaModule {}

@@ -43,6 +43,13 @@ export class SessionsController {
     return new CustomResponse(session);
   }
 
+  @Get("/generate/:count")
+  async generate(@Param("count", new ParseIntPipe()) count: number) {
+    const sessions = await this.sessionsService.generate(count);
+
+    return new CustomResponse(sessions);
+  }
+
   @Put(":id")
   async update(@Param("id", new ParseIntPipe()) id: number, @Body() dto: UpdateSessionDto) {
     const session = await this.sessionsService.update(id, dto);

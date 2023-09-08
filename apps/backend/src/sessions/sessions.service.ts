@@ -5,10 +5,19 @@ import { PG_CONNECTION } from "../database/database.module";
 import { Repository } from "../repositories/repository";
 import { SessionEntity } from "../entities/session";
 import { Utils } from "../shared/utils";
+import { SessionTypesService } from "./types/types.service";
+import { FilmsService } from "../films/films.service";
+import { CinemaService } from "../cinema/cinema.service";
+import { fakerRU } from "@faker-js/faker";
 
 @Injectable()
 export class SessionsService {
-  constructor(@Inject(PG_CONNECTION) private readonly database: Repository) {
+  constructor(
+    @Inject(PG_CONNECTION) private readonly database: Repository,
+    @Inject(FilmsService) private readonly filmsService: FilmsService,
+    @Inject(CinemaService) private readonly cinemasService: CinemaService,
+    @Inject(SessionTypesService) private readonly typesService: SessionTypesService,
+  ) {
     this.database.tableName = "sessions";
   }
 
@@ -87,5 +96,47 @@ export class SessionsService {
     );
 
     return response;
+  }
+
+  async generateDTO(count: number, filmIds: number[], cinemaIds: number[], typeIds: number[]) {
+    const dtos: CreateSessionDto[] = [];
+    while (dtos.length < count) {
+      const ticketsSold = Utils.GetRandomFromRange(5, 10000);
+      const dto = new CreateSessionDto({
+        date: fakerRU.date.future({ years: 1 }),
+        ticketsSold,
+        ticketsOnline: fakerRU.number.int({ max: ticketsSold }),
+        price: Utils.GetRandomFromRange(100, 800),
+        filmId: Utils.GetRandomFromArray(filmIds),
+        cinemaId: Utils.GetRandomFromArray(cinemaIds),
+        typeId: Utils.GetRandomFromArray(typeIds),
+      });
+      console.log(dto);
+
+      dtos.push(dto);
+    }
+
+    return dtos;
+  }
+
+  async generate(count: number) {
+    const filmIds = (await this.filmsService.getAll()).map((obj) => obj.id);
+    const cinemaIds = (await this.cinemasService.getAll()).map((obj) => obj.id);
+    const typeIds = (await this.typesService.getAll()).map((obj) => obj.id);
+    if (filmIds.length < 1 || cinemaIds.length < 1 || typeIds.length < 1)
+      throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
+    const promises = (await this.generateDTO(count, filmIds, cinemaIds, typeIds)).map((dto) =>
+      this.create(dto),
+    );
+
+    try {
+      await Promise.all(promises);
+    } catch (error) {
+      throw new HttpException(
+        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return [];
   }
 }

@@ -1,12 +1,12 @@
 export class SessionEntity {
-  private id: number;
-  private date: Date;
-  private ticketsSold: number;
-  private ticketsOnline: number;
-  private price: number;
-  private filmId: number;
-  private cinemaId: number;
-  private typeId: number;
+  id: number;
+  date: Date;
+  ticketsSold: number;
+  ticketsOnline: number;
+  price: number;
+  filmId: number;
+  cinemaId: number;
+  typeId: number;
 
   constructor(object: object) {
     Object.assign(this, object);
@@ -14,9 +14,9 @@ export class SessionEntity {
 }
 
 export class SessionTypeEntity {
-  private id: number;
-  private name: string;
-  private ration: number;
+  id: number;
+  name: string;
+  ration: number;
 
   constructor(object: object) {
     Object.assign(this, object);

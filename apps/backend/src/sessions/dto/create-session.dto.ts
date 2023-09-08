@@ -21,4 +21,8 @@ export class CreateSessionDto {
 
   @IsNumber({}, { message: "Тип сеанса указан не верно" })
   typeId: number;
+
+  constructor(object: object) {
+    Object.assign(this, object);
+  }
 }
