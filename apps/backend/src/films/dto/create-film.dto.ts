@@ -24,4 +24,8 @@ export class CreateFilmDto {
 
   @IsNumber({}, { message: "Студия указана неверно" })
   studioId: number;
+
+  constructor(obj: object) {
+    Object.assign(this, obj);
+  }
 }

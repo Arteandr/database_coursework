@@ -13,4 +13,24 @@ export class Utils {
       keys: madeSet,
     };
   };
+
+  static GetRandomFromArray = <T>(array: T[]): T => {
+    return array[Math.floor(Math.random() * array.length)];
+  };
+
+  static WaitGroup = (count: number) => {
+    let resolveFn;
+    const promise = new Promise((resolve) => (resolveFn = resolve));
+
+    return {
+      add: () => {
+        count++;
+      },
+      done: () => {
+        count--;
+        if (count === 0) resolveFn();
+      },
+      wait: () => promise,
+    };
+  };
 }

@@ -44,6 +44,21 @@ export class FilmsController {
     return new CustomResponse(film);
   }
 
+  @Get("/withDirector/:id")
+  async getOneWithDirector(@Param("id", new ParseIntPipe()) id: number) {
+    const film = await this.filmsService.getWithDirector(id);
+    if (!film) throw FilmsController.NotFound;
+
+    return new CustomResponse(film);
+  }
+
+  @Get("/generate/:count")
+  async generate(@Param("count", new ParseIntPipe()) count: number) {
+    const films = await this.filmsService.generate(count);
+
+    return new CustomResponse(films);
+  }
+
   @Put(":id")
   async update(@Param("id", new ParseIntPipe()) id: number, @Body() dto: UpdateFilmDto) {
     const film = await this.filmsService.update(id, dto);

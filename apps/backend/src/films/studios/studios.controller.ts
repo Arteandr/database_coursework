@@ -3,7 +3,7 @@ import { StudiosService } from "./studios.service";
 import { CreateStudioDto } from "./dto/create-studio.dto";
 import { UpdateStudioDto } from "./dto/update-studio.dto";
 
-@Controller("/films/studios")
+@Controller("/studios")
 export class StudiosController {
   constructor(private readonly studiosService: StudiosService) {}
 

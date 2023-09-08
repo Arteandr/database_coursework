@@ -1,13 +1,13 @@
 export class FilmEntity {
-  private id: number;
-  private name: string;
-  private description: string;
-  private photo: string;
-  private creationYear: number;
-  private duration: number;
-  private directorId: number;
-  private qualityId: number;
-  private studioId: number;
+  id: number;
+  name: string;
+  description: string;
+  photo: string;
+  creationYear: number;
+  duration: number;
+  directorId: number;
+  qualityId: number;
+  studioId: number;
 
   constructor(object: object) {
     Object.assign(this, object);
@@ -24,10 +24,10 @@ export class CountryEntity {
 }
 
 export class StudioEntity {
-  private id: number;
-  private name: string;
-  private creationYear: Date;
-  private countryId: number;
+  id: number;
+  name: string;
+  creationYear: Date;
+  countryId: number;
 
   constructor(object: object) {
     Object.assign(this, object);
@@ -35,8 +35,8 @@ export class StudioEntity {
 }
 
 export class QualityEntity {
-  private id: number;
-  private name: string;
+  id: number;
+  name: string;
 
   constructor(object: object) {
     Object.assign(this, object);
@@ -44,9 +44,9 @@ export class QualityEntity {
 }
 
 export class DirectorEntity {
-  private id: number;
-  private firstName: string;
-  private lastName: string;
+  id: number;
+  firstName: string;
+  lastName: string;
 
   constructor(object: object) {
     Object.assign(this, object);
