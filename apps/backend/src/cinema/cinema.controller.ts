@@ -44,6 +44,13 @@ export class CinemaController {
     return new CustomResponse(cinema);
   }
 
+  @Get("/generate/:count")
+  async generate(@Param("count", new ParseIntPipe()) count: number) {
+    const cinemas = await this.cinemaService.generate(count);
+
+    return new CustomResponse(cinemas);
+  }
+
   @Put("/:id")
   async updateCinema(@Param("id", new ParseIntPipe()) id: number, @Body() dto: UpdateCinemaDto) {
     const cinema = await this.cinemaService.update(id, dto);

@@ -12,6 +12,10 @@ export class Repository {
 
   private _tableName: string;
 
+  get tableName() {
+    return this._tableName;
+  }
+
   set tableName(value: string) {
     value = value.trim();
     this._tableName = value;

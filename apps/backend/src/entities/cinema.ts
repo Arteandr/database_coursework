@@ -1,12 +1,12 @@
 export class CinemaEntity {
-  private id: number;
-  private name: string;
-  private address: string;
-  private phone: string;
-  private license: string;
-  private licenseEnd: string;
-  private seats: number;
-  private online: boolean;
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
+  license: string;
+  licenseEnd: string;
+  seats: number;
+  online: boolean;
 
   constructor(object: object) {
     Object.assign(this, object);
@@ -14,8 +14,8 @@ export class CinemaEntity {
 }
 
 export class CinemaTypeEntity {
-  private id: number;
-  private name: string;
+  id: number;
+  name: string;
 
   constructor(object: object) {
     Object.assign(this, object);
@@ -23,8 +23,8 @@ export class CinemaTypeEntity {
 }
 
 export class DistrictEntity {
-  private id: number;
-  private name: string;
+  id: number;
+  name: string;
 
   constructor(object: object) {
     Object.assign(this, object);

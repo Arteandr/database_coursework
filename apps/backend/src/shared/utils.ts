@@ -18,19 +18,9 @@ export class Utils {
     return array[Math.floor(Math.random() * array.length)];
   };
 
-  static WaitGroup = (count: number) => {
-    let resolveFn;
-    const promise = new Promise((resolve) => (resolveFn = resolve));
-
-    return {
-      add: () => {
-        count++;
-      },
-      done: () => {
-        count--;
-        if (count === 0) resolveFn();
-      },
-      wait: () => promise,
-    };
+  static GetRandomFromRange = (min: number, max: number) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 }

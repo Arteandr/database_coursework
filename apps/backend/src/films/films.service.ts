@@ -132,9 +132,7 @@ export class FilmsService {
     (await this.getAll()).map((film) => usedNames.add(film.name));
     while (dtos.length < count) {
       const dto = new CreateFilmDto({
-        name:
-          faker.lorem.words({ min: 2, max: 4 }) +
-          Utils.GetRandomFromArray([1, 2, 3, 4, 5, 6, 7, 8]),
+        name: faker.lorem.words({ min: 2, max: 4 }),
         description: faker.lorem.words(10),
         photo: faker.lorem.word() + ".jpg",
         creationYear: faker.number.int({ max: 2023, min: 1990 }),
@@ -157,6 +155,8 @@ export class FilmsService {
     const directorIds = (await this.directorsService.getAll()).map((director) => director.id);
     const qualityIds = (await this.qualitiesService.getAll()).map((quality) => quality.id);
     const studioIds = (await this.studiosService.getAll()).map((studio) => studio.id);
+    if (directorIds.length < 1 || qualityIds.length < 1 || studioIds.length < 1)
+      throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
     const promises = (await this.generateDTO(count, directorIds, studioIds, qualityIds)).map(
       (dto) => this.create(dto),
     );
@@ -164,7 +164,10 @@ export class FilmsService {
     try {
       await Promise.all(promises);
     } catch (error) {
-      console.log("ERROR");
+      throw new HttpException(
+        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
     return [];
   }

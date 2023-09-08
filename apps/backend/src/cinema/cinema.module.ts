@@ -1,15 +1,17 @@
 import { Module } from "@nestjs/common";
 import { CinemaService } from "./cinema.service";
-import { CinemaTypesController } from "./cinema.types.controller";
+import { CinemaTypesController } from "./types/cinema.types.controller";
 import { DatabaseModule } from "../database/database.module";
-import { DistrictController } from "./district.controller";
-import { DistrictService } from "./district.service";
-import { CinemaTypesService } from "./cinema.types.service";
+import { DistrictController } from "./districts/district.controller";
+import { DistrictService } from "./districts/district.service";
+import { CinemaTypesService } from "./types/cinema.types.service";
 import { CinemaController } from "./cinema.controller";
+import { DistrictModule } from "./districts/district.module";
+import { CinemaTypesModule } from "./types/cinema.types.module";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, DistrictModule, CinemaTypesModule],
   controllers: [CinemaController, CinemaTypesController, DistrictController],
-  providers: [CinemaService, DistrictService, CinemaTypesService],
+  providers: [DistrictService, CinemaTypesService, CinemaService],
 })
 export class CinemaModule {}

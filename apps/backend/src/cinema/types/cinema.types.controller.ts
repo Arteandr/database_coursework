@@ -11,8 +11,8 @@ import {
   Post,
   Put,
 } from "@nestjs/common";
-import { NameDto } from "../shared/dto/name.dto";
-import { CustomResponse } from "../shared/response";
+import { NameDto } from "../../shared/dto/name.dto";
+import { CustomResponse } from "../../shared/response";
 import { CinemaTypesService } from "./cinema.types.service";
 
 @Controller("/cinemaTypes")
