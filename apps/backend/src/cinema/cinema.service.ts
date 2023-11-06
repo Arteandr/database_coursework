@@ -99,6 +99,16 @@ export class CinemaService {
     return response;
   }
 
+  async finalRequestWithGroups() {
+    const response = await this.database.query(`
+      SELECT count(*) as including
+      FROM cinemas
+      group by cinemas.districtid;
+    `);
+
+    return response;
+  }
+
   async generateDTO(count: number, typeIds, districtIds: number[]) {
     const dtos: CreateCinemaDto[] = [];
     const usedNames = new Set<string>();
@@ -129,6 +139,27 @@ export class CinemaService {
     }
 
     return dtos;
+  }
+
+  async getTopFilmsByCinema(count: number) {
+    const response = await this.database.query(
+      `
+        SELECT c.name                               AS cinema_name,
+               f.name                               AS film_name,
+               SUM(s.ticketsSold + s.ticketsOnline) AS total_tickets_sold
+        FROM sessions s
+               JOIN
+             films f ON s.filmId = f.id
+               JOIN
+             cinemas c ON s.cinemaId = c.id
+        GROUP BY c.name, f.name
+        ORDER BY total_tickets_sold DESC
+        LIMIT $1;
+      `,
+      [count],
+    );
+
+    return response;
   }
 
   async generate(count: number) {

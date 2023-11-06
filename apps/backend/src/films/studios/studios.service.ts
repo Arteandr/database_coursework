@@ -51,6 +51,43 @@ export class StudiosService {
     return studio;
   }
 
+  async symmetricJoinWithAConditionByADate(studioDateStart: Date, studioDateEnd: Date) {
+    const response = await this.database.query(
+      `
+        select s.date as session_date, f.name as film
+        from sessions s
+               inner join films f on s.filmid = f.id
+        where s.date between $1 and $2;
+      `,
+      [studioDateStart, studioDateEnd],
+    );
+
+    return response;
+  }
+
+  async symmetricJoinWithoutConditionThird() {
+    const response = await this.database.query(
+      `
+        SELECT S.name as studio_name, C.name as country_name
+        FROM studios S
+               INNER JOIN countries C ON S.countryId = C.id;      `,
+    );
+
+    return response;
+  }
+
+  async rightOuterJoin() {
+    const response = await this.database.query(
+      `
+        SELECT S.name as Studio, C.name as Country
+        FROM studios S
+               RIGHT OUTER JOIN countries C ON S.countryId = C.id;
+      `,
+    );
+
+    return response;
+  }
+
   async update(id: number, dto: UpdateStudioDto) {
     const { params, keys } = Utils.MakeSetValue(dto);
     const studio = (

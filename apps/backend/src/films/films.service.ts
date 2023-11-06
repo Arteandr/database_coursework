@@ -70,6 +70,17 @@ export class FilmsService {
     return film;
   }
 
+  async finalRequestWithInclude() {
+    const response = await this.database.query(`
+      SELECT count(films.id)                               as films_count,
+             count(*) filter (where duration > 3600)       as duration_more_60,
+             count(*) filter ( where creationyear > 2012 ) as creation_after_2012
+      FROM films;
+    `);
+
+    return response;
+  }
+
   async update(id: number, dto: UpdateFilmDto) {
     const { keys, params } = Utils.MakeSetValue(dto);
     const film = (
@@ -93,6 +104,78 @@ export class FilmsService {
        FROM %t
        WHERE id=$1`,
       [id],
+    );
+
+    return response;
+  }
+
+  async requestWithIn() {
+    const response = await this.database.query(
+      `
+        SELECT name
+        FROM films
+        WHERE studioId IN (SELECT id FROM studios WHERE creationYear > 2010);
+      `,
+    );
+
+    return response;
+  }
+
+  async requestWithFinalData(firstname: string) {
+    const response = await this.database.query(
+      `
+        SELECT COUNT(*)                                                              as total_film,
+               (SELECT COUNT(*)
+                FROM films
+                WHERE directorId IN (SELECT id FROM directors WHERE firstName = $1)) as films_by_name
+        FROM films;
+      `,
+      [firstname],
+    );
+
+    return response;
+  }
+
+  async requestWithCase() {
+    const response = await this.database.query(`
+      SELECT name,
+             CASE
+               WHEN duration > 120 THEN 'Длинный'
+               WHEN duration > 60 THEN 'Средний'
+               ELSE 'Короткий'
+               END as duration_category
+      FROM films;
+    `);
+
+    return response;
+  }
+
+  async symmetricJoinWithoutConditionFirst() {
+    const response = await this.database.query(
+      `
+        select f.name as film_name, d.firstname as director_firstname, d.lastname as director_lastname
+        from films f
+               inner join directors d on f.directorid = d.id
+      `,
+    );
+
+    return response;
+  }
+
+  async symetricJoinWithAConditionByAForeignKey(studioId: number) {
+    const studio = await this.studiosService.getOne(studioId);
+    if (!studio) throw new HttpException("Такой студии не существует", HttpStatus.NOT_FOUND);
+
+    const response = await this.database.query(
+      `
+        select F.name as Film, S.name as Studio
+        from films F
+               inner join studios S on F.studioid = S.id
+        where F.studioid = $1;
+      `,
+      [studioId],
+      null,
+      null,
     );
 
     return response;

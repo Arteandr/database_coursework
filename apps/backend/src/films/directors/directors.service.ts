@@ -79,4 +79,24 @@ export class DirectorsService {
 
     return response;
   }
+
+  async getTotalIncome() {
+    const response = await this.database.query(`
+      SELECT d.firstName,
+             d.lastName,
+             SUM((s.ticketsSold + s.ticketsOnline) * s.price) AS total_income,
+             COUNT(s.id)                                      AS number_of_rentals
+      FROM directors d
+             JOIN
+           films f ON d.id = f.directorId
+             JOIN
+           sessions s ON f.id = s.filmId
+      WHERE EXTRACT(YEAR FROM s.date) = :specified_year
+      GROUP BY d.firstName,
+               d.lastName
+      ORDER BY total_income DESC;
+    `);
+
+    return response;
+  }
 }

@@ -68,6 +68,18 @@ export class SessionsService {
     return session;
   }
 
+  async symmetricJoinWithoutConditionSecond() {
+    const response = await this.database.query(
+      `
+        SELECT S.date as session_date, F.name as film_name
+        FROM sessions S
+               INNER JOIN films F ON S.filmId = F.id;
+      `,
+    );
+
+    return response;
+  }
+
   async update(id: number, dto: UpdateSessionDto) {
     const { params, keys } = Utils.MakeSetValue(dto);
     const session = (

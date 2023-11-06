@@ -63,6 +63,46 @@ export class DistrictService {
     return disctrict;
   }
 
+  async requestWithNotIn() {
+    const response = await this.database.query(`
+      SELECT name
+      FROM districts
+      WHERE id NOT IN (SELECT districtId FROM cinemas);
+    `);
+
+    return response;
+  }
+
+  async getTopFilmsByDistrict(counter: number) {
+    const response = await this.database.query(
+      `
+        SELECT cinema_name, film_name, total_tickets_sold
+        FROM (SELECT c.name                                                                                     as cinema_name,
+                     f.name                                                                                     as film_name,
+                     SUM(s.ticketsSold + s.ticketsOnline)                                                       AS total_tickets_sold,
+                     ROW_NUMBER() OVER (PARTITION BY c.name ORDER BY SUM(s.ticketsSold + s.ticketsOnline) DESC) as rn
+              FROM sessions s
+                     JOIN films f ON s.filmId = f.id
+                     JOIN cinemas c ON s.cinemaId = c.id
+              GROUP BY c.name, f.name) t
+        WHERE rn <= $1;
+      `,
+      [counter],
+    );
+
+    return response;
+  }
+
+  async requestWithUnion() {
+    const response = await this.database.query(`
+    (select name from districts)
+    union
+    (select name from cinema_types);
+    `);
+
+    return response;
+  }
+
   async remove(id: number) {
     const response = await this.database.query("DELETE FROM %t WHERE id=$1", [id]);
 
