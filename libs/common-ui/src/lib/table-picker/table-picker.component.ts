@@ -1,5 +1,10 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { BehaviorSubject, Subject, takeUntil } from "rxjs";
+
+interface Table {
+  name: string;
+  ref: string;
+}
 
 @Component({
   selector: "bd-table-picker",
@@ -9,8 +14,8 @@ import { BehaviorSubject, Subject, takeUntil } from "rxjs";
 export class TablePickerComponent implements OnInit, OnDestroy {
   selected$ = new BehaviorSubject<string>("");
   destroy$ = new Subject();
-  options: string[] = [];
 
+  @Input({}) options: Table[] = [];
   @Output() changeEvent = new EventEmitter<string>();
 
   onSelectedValueChange(value: string) {
@@ -18,11 +23,6 @@ export class TablePickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log();
-    for (let i = 0; i < 5; i++) {
-      this.options.push(`option-${i + 1}`);
-    }
-
     this.selected$
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => this.changeEvent.emit(value));

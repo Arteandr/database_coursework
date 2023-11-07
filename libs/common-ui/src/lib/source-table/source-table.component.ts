@@ -1,7 +1,7 @@
 import { Component, DoCheck, Input, OnInit, ViewChild } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
-import { BehaviorSubject, interval, Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Component({
   selector: "bd-source-table",
@@ -68,11 +68,9 @@ export class SourceTableComponent implements DoCheck, OnInit {
   }
 
   onChangeTable(table: string) {
-    console.log("change");
     this.loading$.next(true);
-    interval(3000).subscribe(() => {
-      this.loading$.next(false);
-    });
+    console.log(table);
+    this.loading$.next(false);
   }
 
   ngOnInit(): void {

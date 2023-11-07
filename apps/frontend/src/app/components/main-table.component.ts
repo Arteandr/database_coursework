@@ -1,19 +1,29 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonUiModule } from "@bd/common-ui";
 import { TableService } from "../services/table.service";
+import { FilmsService } from "../services/films.service";
+import { take } from "rxjs";
 
 @Component({
   selector: "bd-main-table",
   template: ` <div class="main-table">
-    <bd-table-picker (changeEvent)="onCurrentTableChange($event)"></bd-table-picker>
+    <bd-table-picker
+      (changeEvent)="onCurrentTableChange($event)"
+      [options]="tables"
+    ></bd-table-picker>
     <bd-source-table [currentTable$]="selected$"></bd-source-table>
   </div>`,
   styleUrls: ["./main-table.component.scss"],
   standalone: true,
   imports: [CommonUiModule],
 })
-export class MainTableComponent {
-  constructor(private readonly tableService: TableService) {}
+export class MainTableComponent implements OnInit {
+  tables: { name: string; ref: string }[] = [];
+
+  constructor(
+    private readonly tableService: TableService,
+    private readonly filmsService: FilmsService,
+  ) {}
 
   get selected$() {
     return this.tableService.selected$;
@@ -21,6 +31,11 @@ export class MainTableComponent {
 
   onCurrentTableChange(value: string) {
     this.tableService.changeSelected(value);
+  }
+
+  ngOnInit(): void {
+    this.tables = this.tableService.tables();
+    this.filmsService.getAll().pipe(take(2)).subscribe(console.log);
   }
 }
 

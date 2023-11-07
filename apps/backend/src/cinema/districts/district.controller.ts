@@ -35,6 +35,27 @@ export class DistrictController {
     return new CustomResponse(district);
   }
 
+  @Get("/getTopFilmsByDistrict")
+  async getTopFilmsByDistrict() {
+    const response = await this.districtService.getTopFilmsByDistrict(5);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestWithUnion")
+  async getRequestWithUnion() {
+    const response = await this.districtService.requestWithUnion();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestWithNotIn")
+  async getRequestWithNotIn() {
+    const response = await this.districtService.requestWithNotIn();
+
+    return new CustomResponse(response);
+  }
+
   @Get("/:id")
   async getDistrict(@Param("id", new ParseIntPipe()) id: number) {
     const district = await this.districtService.getOne(id);

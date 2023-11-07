@@ -23,6 +23,17 @@ export class QualitiesService {
     return quality;
   }
 
+  async finalRequestGroupsData() {
+    const response = await this.database.query(`
+      SELECT film_qualities.name AS quality_category, COUNT(*) AS film_count
+      FROM films
+             JOIN film_qualities ON films.qualityId = film_qualities.id
+      WHERE films.creationYear > 2010
+      GROUP BY film_qualities.name;`);
+
+    return response;
+  }
+
   async getAll() {
     const qualities = await this.database.query(
       `SELECT *

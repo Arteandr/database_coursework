@@ -44,6 +44,13 @@ export class QualitiesController {
     return new CustomResponse(quality);
   }
 
+  @Get("/finalRequestGroupsData")
+  async getFinalRequestGroupsData() {
+    const response = await this.qualitiesService.finalRequestGroupsData();
+
+    return new CustomResponse(response);
+  }
+
   @Put(":id")
   async update(@Param("id", new ParseIntPipe()) id: number, @Body() dto: NameDto) {
     const quality = await this.qualitiesService.update(id, dto);

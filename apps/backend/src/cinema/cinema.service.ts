@@ -109,6 +109,31 @@ export class CinemaService {
     return response;
   }
 
+  async generateAverageNumberOfViewersForEachCinema() {
+    const response = await this.database.query(`
+      SELECT d.name             AS "Название района",
+             c.name             AS "Название кинотеатра",
+             AVG(s.ticketsSold) AS "Среднее количество зрителей"
+      FROM cinemas c
+             INNER JOIN districts d ON c.districtId = d.id
+             INNER JOIN sessions s ON c.id = s.cinemaId
+      GROUP BY d.name, c.name;`);
+
+    return response;
+  }
+
+  async generateAverageNumberOfViewersForAllCinemasInEachDist() {
+    const response = await this.database.query(`
+      SELECT d.name             AS "Название района",
+             AVG(s.ticketsSold) AS "Среднее количество зрителей"
+      FROM cinemas c
+             INNER JOIN districts d ON c.districtId = d.id
+             INNER JOIN sessions s ON c.id = s.cinemaId
+      GROUP BY d.name;`);
+
+    return response;
+  }
+
   async generateDTO(count: number, typeIds, districtIds: number[]) {
     const dtos: CreateCinemaDto[] = [];
     const usedNames = new Set<string>();
@@ -144,9 +169,9 @@ export class CinemaService {
   async getTopFilmsByCinema(count: number) {
     const response = await this.database.query(
       `
-        SELECT c.name                               AS cinema_name,
-               f.name                               AS film_name,
-               SUM(s.ticketsSold + s.ticketsOnline) AS total_tickets_sold
+        SELECT c.name                               AS "Название кинотеатра",
+               f.name                               AS "Название фильма",
+               SUM(s.ticketsSold + s.ticketsOnline) AS "Общее количество проданных билетов"
         FROM sessions s
                JOIN
              films f ON s.filmId = f.id

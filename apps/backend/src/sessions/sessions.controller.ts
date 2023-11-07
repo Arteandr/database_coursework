@@ -50,6 +50,13 @@ export class SessionsController {
     return new CustomResponse(sessions);
   }
 
+  @Get("/symmetricWithoutCondSecond")
+  async getSymWithoutSecond() {
+    const response = await this.sessionsService.symmetricJoinWithoutConditionSecond();
+
+    return new CustomResponse(response);
+  }
+
   @Put(":id")
   async update(@Param("id", new ParseIntPipe()) id: number, @Body() dto: UpdateSessionDto) {
     const session = await this.sessionsService.update(id, dto);

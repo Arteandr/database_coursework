@@ -65,7 +65,7 @@ export class DistrictService {
 
   async requestWithNotIn() {
     const response = await this.database.query(`
-      SELECT name
+      SELECT name "Название района"
       FROM districts
       WHERE id NOT IN (SELECT districtId FROM cinemas);
     `);
@@ -76,7 +76,9 @@ export class DistrictService {
   async getTopFilmsByDistrict(counter: number) {
     const response = await this.database.query(
       `
-        SELECT cinema_name, film_name, total_tickets_sold
+        SELECT cinema_name as "Название кинотеатра",
+               film_name as "Название фильма",
+               total_tickets_sold as "Количестов проданных билетов"
         FROM (SELECT c.name                                                                                     as cinema_name,
                      f.name                                                                                     as film_name,
                      SUM(s.ticketsSold + s.ticketsOnline)                                                       AS total_tickets_sold,
@@ -95,9 +97,9 @@ export class DistrictService {
 
   async requestWithUnion() {
     const response = await this.database.query(`
-    (select name from districts)
+    (select name as "Название района" from districts)
     union
-    (select name from cinema_types);
+    (select name "Тип кинотеатра" from cinema_types);
     `);
 
     return response;

@@ -51,6 +51,35 @@ export class CinemaController {
     return new CustomResponse(cinemas);
   }
 
+  @Get("/finalRequestWithGroups")
+  async getFinalRequestWithGroups() {
+    const response = await this.cinemaService.finalRequestWithGroups();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/generateAverageNumberOfViewersForEachCinema")
+  async getGenerateAverageNumberOfViewersForEachCinema() {
+    const response = await this.cinemaService.generateAverageNumberOfViewersForEachCinema();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/getTopFilmsByCinema")
+  async getTopFilmsByCinema() {
+    const response = await this.cinemaService.getTopFilmsByCinema(5);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/generateAverageNumberOfViewersForAllCinemasInEachDist")
+  async getGenerateAverageNumberOfViewersForAllCinemasInEachDist() {
+    const response =
+      await this.cinemaService.generateAverageNumberOfViewersForAllCinemasInEachDist();
+
+    return new CustomResponse(response);
+  }
+
   @Put("/:id")
   async updateCinema(@Param("id", new ParseIntPipe()) id: number, @Body() dto: UpdateCinemaDto) {
     const cinema = await this.cinemaService.update(id, dto);

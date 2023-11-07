@@ -52,6 +52,62 @@ export class FilmsController {
     return new CustomResponse(film);
   }
 
+  @Get("/symmetricForeignFirst/:id")
+  async getSymForeignFirst(@Param("id", new ParseIntPipe()) id: number) {
+    const response = await this.filmsService.symetricJoinWithAConditionByAForeignKey(id);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestOnRequestLeft")
+  async getRequestOnRequestLeft() {
+    const response = await this.filmsService.requestOnRequest();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/getAllCount")
+  async getAllCount() {
+    const response = await this.filmsService.getAllCount();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestWithCase")
+  async getRequestWithCase() {
+    const response = await this.filmsService.requestWithCase();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestWithFinalData/:firstname")
+  async getRequestWithFinalData(@Param("firstname") firstName: string) {
+    const response = await this.filmsService.requestWithFinalData(firstName);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestWithIn")
+  async getRequestWithIn() {
+    const response = await this.filmsService.requestWithIn();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/finalRequestWithInclude")
+  async getFinalRequestWithInclude() {
+    const response = await this.filmsService.finalRequestWithInclude();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/symmetricWithoutCondFirst")
+  async getSymWithoutFirst() {
+    const response = await this.filmsService.symmetricJoinWithoutConditionFirst();
+
+    return new CustomResponse(response);
+  }
+
   @Get("/generate/:count")
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const films = await this.filmsService.generate(count);

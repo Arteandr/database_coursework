@@ -51,6 +51,20 @@ export class DirectorsService {
     return director;
   }
 
+  async requestOnRequestFinal() {
+    const response = await this.database.query(`
+      SELECT directors.firstName as "Имя режиссера",
+             directors.lastName  as "Фамилия режиссера",
+             subquery.film_count as "Количество фильмов"
+      FROM directors
+             INNER JOIN (SELECT directorId, COUNT(*) AS film_count
+                         FROM films
+                         GROUP BY directorId) AS subquery
+                        ON directors.id = subquery.directorId;`);
+
+    return response;
+  }
+
   async update(id: number, dto: UpdateDirectorDto) {
     const { params, keys } = Utils.MakeSetValue(dto);
     const director = (
@@ -80,22 +94,25 @@ export class DirectorsService {
     return response;
   }
 
-  async getTotalIncome() {
-    const response = await this.database.query(`
-      SELECT d.firstName,
-             d.lastName,
-             SUM((s.ticketsSold + s.ticketsOnline) * s.price) AS total_income,
-             COUNT(s.id)                                      AS number_of_rentals
+  async getTotalIncome(year: number) {
+    const response = await this.database.query(
+      `
+      SELECT d.firstName                                      as "Имя режиссера",
+             d.lastName                                       as "Фамилия режиссера",
+             SUM((s.ticketsSold + s.ticketsOnline) * s.price) AS "Суммарный доход",
+             COUNT(s.id)                                      AS "Количество прокатов"
       FROM directors d
              JOIN
            films f ON d.id = f.directorId
              JOIN
            sessions s ON f.id = s.filmId
-      WHERE EXTRACT(YEAR FROM s.date) = :specified_year
+      WHERE EXTRACT(YEAR FROM s.date) = $1
       GROUP BY d.firstName,
                d.lastName
-      ORDER BY total_income DESC;
-    `);
+      ORDER BY "Суммарный доход" DESC;
+    `,
+      [year],
+    );
 
     return response;
   }

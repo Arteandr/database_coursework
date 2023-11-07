@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { StudiosService } from "./studios.service";
 import { CreateStudioDto } from "./dto/create-studio.dto";
-import { UpdateStudioDto } from "./dto/update-studio.dto";
+import { SymmetricDateFirstDto, UpdateStudioDto } from "./dto/update-studio.dto";
+import { CustomResponse } from "../../shared/response";
 
 @Controller("/studios")
 export class StudiosController {
@@ -20,6 +21,30 @@ export class StudiosController {
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.studiosService.getOne(+id);
+  }
+
+  @Get("/symmetricDateFirst")
+  async getSymDateFirst(@Body() dto: SymmetricDateFirstDto) {
+    const response = await this.studiosService.symmetricJoinWithAConditionByADate(
+      dto.firstDate,
+      dto.secondDate,
+    );
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/rightOuter")
+  async getRightOuter() {
+    const response = await this.studiosService.rightOuterJoin();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/symmetricWithoutCondThird")
+  async getSymWithoutThird() {
+    const response = await this.studiosService.symmetricJoinWithoutConditionThird();
+
+    return new CustomResponse(response);
   }
 
   @Put(":id")

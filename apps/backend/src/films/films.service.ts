@@ -70,11 +70,31 @@ export class FilmsService {
     return film;
   }
 
+  async requestOnRequest() {
+    const response = await this.database.query(`
+      SELECT films.name AS film_name, directors.firstName AS director_firstName, directors.lastName AS director_lastName
+      FROM films
+             LEFT JOIN (SELECT id, firstName, lastName
+                        FROM directors) AS directors
+                       ON films.directorId = directors.id;`);
+
+    return response;
+  }
+
+  async getAllCount() {
+    const response = await this.database.query(`
+      SELECT count(*) as films_count
+      from films;
+    `);
+
+    return response;
+  }
+
   async finalRequestWithInclude() {
     const response = await this.database.query(`
-      SELECT count(films.id)                               as films_count,
-             count(*) filter (where duration > 3600)       as duration_more_60,
-             count(*) filter ( where creationyear > 2012 ) as creation_after_2012
+      SELECT count(films.id)                               as "Всего фильмов",
+             count(*) filter (where duration > 3600)       as "С длительностью больше часа",
+             count(*) filter ( where creationyear > 2012 ) as "Созданные после 2012"
       FROM films;
     `);
 
@@ -112,7 +132,7 @@ export class FilmsService {
   async requestWithIn() {
     const response = await this.database.query(
       `
-        SELECT name
+        SELECT name as "Имя фильма"
         FROM films
         WHERE studioId IN (SELECT id FROM studios WHERE creationYear > 2010);
       `,
@@ -124,10 +144,10 @@ export class FilmsService {
   async requestWithFinalData(firstname: string) {
     const response = await this.database.query(
       `
-        SELECT COUNT(*)                                                              as total_film,
+        SELECT COUNT(*)                                                              as                     "Количество фильмов",
                (SELECT COUNT(*)
                 FROM films
-                WHERE directorId IN (SELECT id FROM directors WHERE firstName = $1)) as films_by_name
+                WHERE directorId IN (SELECT id FROM directors WHERE firstName = $1)) as "Фильмы ${firstname}"
         FROM films;
       `,
       [firstname],
@@ -138,12 +158,12 @@ export class FilmsService {
 
   async requestWithCase() {
     const response = await this.database.query(`
-      SELECT name,
+      SELECT name     "Имя фильма",
              CASE
                WHEN duration > 120 THEN 'Длинный'
                WHEN duration > 60 THEN 'Средний'
                ELSE 'Короткий'
-               END as duration_category
+               END as "Тип длительности"
       FROM films;
     `);
 

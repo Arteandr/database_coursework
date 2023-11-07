@@ -11,6 +11,14 @@ export class TableService {
     return this._selected$.asObservable().pipe(filter((val) => val.trim().length > 0));
   }
 
+  tables() {
+    return [
+      { name: "Фильмы", ref: "films" },
+      { name: "Кинотеатры", ref: "cinemas" },
+      { name: "Сеансы", ref: "sessions" },
+    ];
+  }
+
   public changeSelected(value: string) {
     this._selected$.next(value);
   }
