@@ -16,7 +16,7 @@ import { CreateSessionTypeDto } from "./dto/create-session-type.dto";
 import { UpdateSessionTypeDto } from "./dto/update-session-type.dto";
 import { CustomResponse } from "../../shared/response";
 
-@Controller("/sessionTypes")
+@Controller("/session_types")
 export class SessionTypesController {
   static NotFound = new HttpException("Такого типа сессии не существует", HttpStatus.NOT_FOUND);
 
@@ -31,19 +31,19 @@ export class SessionTypesController {
     return new CustomResponse(sessionType, HttpStatus.CREATED);
   }
 
+  @Get()
+  async getAll() {
+    const sessionTypes = await this.sessionTypesService.getAll();
+
+    return new CustomResponse(sessionTypes);
+  }
+
   @Get(":id")
   async getOne(@Param("id", new ParseIntPipe()) id: number) {
     const sessionType = await this.sessionTypesService.getOne(id);
     if (!sessionType) throw SessionTypesController.NotFound;
 
     return new CustomResponse(sessionType);
-  }
-
-  @Get()
-  async getAll() {
-    const sessionTypes = await this.sessionTypesService.getAll();
-
-    return new CustomResponse(sessionTypes);
   }
 
   @Put(":id")

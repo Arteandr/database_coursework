@@ -1,15 +1,15 @@
 create table cinemas
 (
-  id         serial primary key               not null unique,
-  name       varchar(255)                     not null unique,
-  address    varchar(255)                     not null,
-  phone      varchar(255)                     not null,
-  license    varchar(255)                     not null,
-  licenseEnd timestamp                        not null,
-  seats      int                              not null,
-  online     bool                             not null,
-  typeId     int references cinema_types (id) not null,
-  districtId int references districts (id)    not null
+  id         serial primary key                                 not null unique,
+  name       varchar(255)                                       not null unique,
+  address    varchar(255)                                       not null,
+  phone      varchar(255)                                       not null,
+  license    varchar(255)                                       not null,
+  licenseEnd timestamp                                          not null,
+  seats      int                                                not null,
+  online     bool                                               not null,
+  typeId     int references cinema_types (id) on delete cascade not null,
+  districtId int references districts (id) on delete cascade    not null
 );
 
 create table session_types
@@ -28,14 +28,14 @@ values ('вечерний', 1.4);
 
 create table sessions
 (
-  id            serial primary key                not null unique,
-  date          timestamp                         not null,
-  ticketsSold   int                               not null,
-  ticketsOnline int                               not null,
-  price         numeric(10, 2)                    not null,
-  filmId        int references films (id)         not null,
-  cinemaId      int references cinemas (id)       not null,
-  typeId        int references session_types (id) not null
+  id            serial primary key                                  not null unique,
+  date          timestamp                                           not null,
+  ticketsSold   int                                                 not null,
+  ticketsOnline int                                                 not null,
+  price         numeric(10, 2)                                      not null,
+  filmId        int references films (id) on delete cascade         not null,
+  cinemaId      int references cinemas (id) on delete cascade       not null,
+  typeId        int references session_types (id) on delete cascade not null
 );
 
 create index idx_films_directorId on films (directorid);
@@ -47,7 +47,6 @@ create or replace function set_films_id()
   returns trigger as
 $$
 begin
-  NEW.id = nextval('films_id_seq');
   return NEW;
 end;
 $$ language plpgsql;
@@ -144,7 +143,6 @@ create or replace function set_cinemas_id()
   returns trigger as
 $$
 begin
-  NEW.id = nextval('cinemas_id_seq');
   return NEW;
 end;
 $$ language plpgsql;

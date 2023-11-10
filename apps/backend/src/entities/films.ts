@@ -15,8 +15,8 @@ export class FilmEntity {
 }
 
 export class CountryEntity {
-  private id: number;
-  private name: string;
+  id: number;
+  name: string;
 
   constructor(object: object) {
     Object.assign(this, object);

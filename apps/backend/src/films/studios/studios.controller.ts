@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { StudiosService } from "./studios.service";
 import { CreateStudioDto } from "./dto/create-studio.dto";
 import { SymmetricDateFirstDto, UpdateStudioDto } from "./dto/update-studio.dto";
@@ -9,18 +19,17 @@ export class StudiosController {
   constructor(private readonly studiosService: StudiosService) {}
 
   @Post()
-  create(@Body() createStudioDto: CreateStudioDto) {
-    return this.studiosService.create(createStudioDto);
+  async create(@Body() createStudioDto: CreateStudioDto) {
+    const response = this.studiosService.create(createStudioDto);
+
+    return new CustomResponse(response, HttpStatus.CREATED);
   }
 
   @Get()
-  findAll() {
-    return this.studiosService.getAll();
-  }
+  async findAll() {
+    const response = await this.studiosService.getAll();
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.studiosService.getOne(+id);
+    return new CustomResponse(response);
   }
 
   @Get("/symmetricDateFirst")
@@ -43,6 +52,20 @@ export class StudiosController {
   @Get("/symmetricWithoutCondThird")
   async getSymWithoutThird() {
     const response = await this.studiosService.symmetricJoinWithoutConditionThird();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/generate/:count")
+  async generate(@Param("count", new ParseIntPipe()) count: number) {
+    const films = await this.studiosService.generate(count);
+
+    return new CustomResponse(films);
+  }
+
+  @Get(":id")
+  async findOne(@Param("id") id: string) {
+    const response = await this.studiosService.getOne(+id);
 
     return new CustomResponse(response);
   }

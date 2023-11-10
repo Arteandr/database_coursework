@@ -36,6 +36,20 @@ export class DirectorsController {
     return new CustomResponse(directors);
   }
 
+  @Get("/getTotalIncome/:year")
+  async getTotalIncome(@Param("year", new ParseIntPipe()) year: number) {
+    const response = await this.directorsService.getTotalIncome(year);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/requestOnRequestFinal")
+  async getRequestOnRequestFinal() {
+    const response = await this.directorsService.requestOnRequestFinal();
+
+    return new CustomResponse(response);
+  }
+
   @Get(":id")
   async getOne(@Param("id", new ParseIntPipe()) id: number) {
     const director = await this.directorsService.getOne(id);
@@ -52,20 +66,6 @@ export class DirectorsController {
     const director = await this.directorsService.update(id, updateDirectorDto);
 
     return new CustomResponse(director);
-  }
-
-  @Get("/getTotalIncome/:year")
-  async getTotalIncome(@Param("year", new ParseIntPipe()) year: number) {
-    const response = await this.directorsService.getTotalIncome(year);
-
-    return new CustomResponse(response);
-  }
-
-  @Get("/requestOnRequestFinal")
-  async getRequestOnRequestFinal() {
-    const response = await this.directorsService.requestOnRequestFinal();
-
-    return new CustomResponse(response);
   }
 
   @Delete(":id")

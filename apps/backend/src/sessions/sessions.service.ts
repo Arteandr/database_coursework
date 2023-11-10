@@ -71,7 +71,7 @@ export class SessionsService {
   async symmetricJoinWithoutConditionSecond() {
     const response = await this.database.query(
       `
-        SELECT S.date as session_date, F.name as film_name
+        SELECT S.date as "Дата сеанса", F.name as "Название фильма"
         FROM sessions S
                INNER JOIN films F ON S.filmId = F.id;
       `,

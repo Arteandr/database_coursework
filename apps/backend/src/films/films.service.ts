@@ -72,7 +72,9 @@ export class FilmsService {
 
   async requestOnRequest() {
     const response = await this.database.query(`
-      SELECT films.name AS film_name, directors.firstName AS director_firstName, directors.lastName AS director_lastName
+      SELECT films.name          AS "Название фильма",
+             directors.firstName AS "Имя режиссера",
+             directors.lastName  AS "Фамилия режиссера"
       FROM films
              LEFT JOIN (SELECT id, firstName, lastName
                         FROM directors) AS directors
@@ -83,9 +85,10 @@ export class FilmsService {
 
   async getAllCount() {
     const response = await this.database.query(`
-      SELECT count(*) as films_count
+      SELECT count(*) as "Общее количество фильмов"
       from films;
     `);
+    console.log(response);
 
     return response;
   }
@@ -141,16 +144,16 @@ export class FilmsService {
     return response;
   }
 
-  async requestWithFinalData(firstname: string) {
+  async requestWithFinalData(id: number) {
     const response = await this.database.query(
       `
-        SELECT COUNT(*)                                                              as                     "Количество фильмов",
+        SELECT COUNT(*)                                                              as                             "Общее количество фильмов",
                (SELECT COUNT(*)
                 FROM films
-                WHERE directorId IN (SELECT id FROM directors WHERE firstName = $1)) as "Фильмы ${firstname}"
+                WHERE directorId IN (SELECT id FROM directors as d WHERE d.id = $1)) as "Фильмы режиссера с ID ${id}"
         FROM films;
       `,
-      [firstname],
+      [id],
     );
 
     return response;
@@ -173,10 +176,11 @@ export class FilmsService {
   async symmetricJoinWithoutConditionFirst() {
     const response = await this.database.query(
       `
-        select f.name as film_name, d.firstname as director_firstname, d.lastname as director_lastname
-        from films f
-               inner join directors d on f.directorid = d.id
-      `,
+        SELECT s.id    AS "ID сеанса",
+               s.date  AS "Дата сеанса",
+               st.name AS "Тип сеанса"
+        FROM sessions as s
+               inner JOIN session_types st on s.typeid = st.id;`,
     );
 
     return response;
@@ -188,7 +192,7 @@ export class FilmsService {
 
     const response = await this.database.query(
       `
-        select F.name as Film, S.name as Studio
+        select F.name as "Название фильма", S.name as "Название студии"
         from films F
                inner join studios S on F.studioid = S.id
         where F.studioid = $1;

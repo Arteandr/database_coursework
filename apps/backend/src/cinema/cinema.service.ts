@@ -99,25 +99,41 @@ export class CinemaService {
     return response;
   }
 
-  async finalRequestWithGroups() {
-    const response = await this.database.query(`
-      SELECT count(*) as including
-      FROM cinemas
-      group by cinemas.districtid;
-    `);
+  async finalRequestWithGroups(count) {
+    const response = await this.database.query(
+      `
+        SELECT cinema_types.name AS "Тип кинотеатра",
+               COUNT(*)          AS "Количество сеансов"
+        FROM sessions
+               JOIN cinemas ON sessions.cinemaId = cinemas.id
+               JOIN cinema_types ON cinemas.typeId = cinema_types.id
+        WHERE sessions.price > $1
+        GROUP BY cinema_types.name;`,
+      [count],
+    );
 
     return response;
   }
 
   async generateAverageNumberOfViewersForEachCinema() {
+    // const response = await this.database.query(`
+    //   SELECT d.name             AS "Название района",
+    //          c.name             AS "Название кинотеатра",
+    //          AVG(s.ticketsSold) AS "Среднее количество зрителей"
+    //   FROM cinemas c
+    //          INNER JOIN districts d ON c.districtId = d.id
+    //          INNER JOIN sessions s ON c.id = s.cinemaId
+    //   GROUP BY d.name, c.name;`);
+
     const response = await this.database.query(`
-      SELECT d.name             AS "Название района",
-             c.name             AS "Название кинотеатра",
-             AVG(s.ticketsSold) AS "Среднее количество зрителей"
+      SELECT c.id                            AS "ID кинотеатра",
+             c.name                          AS "Название кинотеатра",
+             COALESCE(AVG(s.ticketsSold), 0) AS "Среднее количество зрителей"
       FROM cinemas c
-             INNER JOIN districts d ON c.districtId = d.id
-             INNER JOIN sessions s ON c.id = s.cinemaId
-      GROUP BY d.name, c.name;`);
+             left outer JOIN sessions s ON c.id = s.cinemaId
+      GROUP BY c.id, c.name
+      ORDER BY "Среднее количество зрителей" DESC;
+    `);
 
     return response;
   }
@@ -167,22 +183,36 @@ export class CinemaService {
   }
 
   async getTopFilmsByCinema(count: number) {
-    const response = await this.database.query(
-      `
-        SELECT c.name                               AS "Название кинотеатра",
-               f.name                               AS "Название фильма",
-               SUM(s.ticketsSold + s.ticketsOnline) AS "Общее количество проданных билетов"
-        FROM sessions s
-               JOIN
-             films f ON s.filmId = f.id
-               JOIN
-             cinemas c ON s.cinemaId = c.id
-        GROUP BY c.name, f.name
-        ORDER BY total_tickets_sold DESC
-        LIMIT $1;
-      `,
-      [count],
-    );
+    // const response = await this.database.query(
+    //   `
+    //     SELECT c.name                               AS "Название кинотеатра",
+    //            f.name                               AS "Название фильма",
+    //            SUM(s.ticketsSold + s.ticketsOnline) AS "Общее количество проданных билетов"
+    //     FROM sessions s
+    //            JOIN
+    //          films f ON s.filmId = f.id
+    //            JOIN
+    //          cinemas c ON s.cinemaId = c.id
+    //     GROUP BY c.name, f.name
+    //     ORDER BY "Общее количество проданных билетов" DESC
+    //     LIMIT $1;
+    //   `,
+    //   [count],
+    // );
+    const response = await this.database.query(`
+      WITH ranked_films AS (SELECT cinemaId,
+                                   filmId,
+                                   RANK() OVER (PARTITION BY cinemaId ORDER BY ticketsSold DESC) AS film_rank
+                            FROM sessions)
+      SELECT r.cinemaId AS "ID кинотеатра",
+             c.name     AS "Название кинотеатра",
+             r.filmId   AS "ID фильма",
+             f.name     AS "Название фильма"
+      FROM ranked_films r
+             JOIN cinemas c ON r.cinemaId = c.id
+             JOIN films f ON r.filmId = f.id
+      WHERE r.film_rank <= 5;
+    `);
 
     return response;
   }

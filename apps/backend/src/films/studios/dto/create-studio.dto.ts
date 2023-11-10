@@ -10,4 +10,8 @@ export class CreateStudioDto {
 
   @IsNumber({}, { message: "Неверно задана страна" })
   countryId: number;
+
+  constructor(obj: object) {
+    Object.assign(this, obj);
+  }
 }

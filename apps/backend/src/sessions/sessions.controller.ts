@@ -35,14 +35,6 @@ export class SessionsController {
     return new CustomResponse(sessions);
   }
 
-  @Get(":id")
-  async getOne(@Param("id", new ParseIntPipe()) id: number) {
-    const session = await this.sessionsService.getOne(id);
-    if (!session) throw SessionsController.NotFound;
-
-    return new CustomResponse(session);
-  }
-
   @Get("/generate/:count")
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const sessions = await this.sessionsService.generate(count);
@@ -55,6 +47,14 @@ export class SessionsController {
     const response = await this.sessionsService.symmetricJoinWithoutConditionSecond();
 
     return new CustomResponse(response);
+  }
+
+  @Get(":id")
+  async getOne(@Param("id", new ParseIntPipe()) id: number) {
+    const session = await this.sessionsService.getOne(id);
+    if (!session) throw SessionsController.NotFound;
+
+    return new CustomResponse(session);
   }
 
   @Put(":id")

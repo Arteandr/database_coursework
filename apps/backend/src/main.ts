@@ -14,6 +14,7 @@ async function bootstrap() {
 
   const globalPrefix = "api";
   app.setGlobalPrefix(globalPrefix);
+  app.enableCors();
   const port = process.env.BACKEND_PORT || 3000;
 
   const httpAdapter = app.get(HttpAdapterHost);

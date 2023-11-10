@@ -36,12 +36,11 @@ export class FilmsController {
     return new CustomResponse(films);
   }
 
-  @Get(":id")
-  async getOne(@Param("id", new ParseIntPipe()) id: number) {
-    const film = await this.filmsService.getOne(id);
-    if (!film) throw FilmsController.NotFound;
+  @Get("/requestWithFinalData/:id")
+  async getRequestWithFinalData(@Param("id") id: number) {
+    const response = await this.filmsService.requestWithFinalData(id);
 
-    return new CustomResponse(film);
+    return new CustomResponse(response);
   }
 
   @Get("/withDirector/:id")
@@ -69,20 +68,12 @@ export class FilmsController {
   @Get("/getAllCount")
   async getAllCount() {
     const response = await this.filmsService.getAllCount();
-
     return new CustomResponse(response);
   }
 
   @Get("/requestWithCase")
   async getRequestWithCase() {
     const response = await this.filmsService.requestWithCase();
-
-    return new CustomResponse(response);
-  }
-
-  @Get("/requestWithFinalData/:firstname")
-  async getRequestWithFinalData(@Param("firstname") firstName: string) {
-    const response = await this.filmsService.requestWithFinalData(firstName);
 
     return new CustomResponse(response);
   }
@@ -113,6 +104,14 @@ export class FilmsController {
     const films = await this.filmsService.generate(count);
 
     return new CustomResponse(films);
+  }
+
+  @Get(":id")
+  async getOne(@Param("id", new ParseIntPipe()) id: number) {
+    const film = await this.filmsService.getOne(id);
+    if (!film) throw FilmsController.NotFound;
+
+    return new CustomResponse(film);
   }
 
   @Put(":id")

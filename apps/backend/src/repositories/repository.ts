@@ -60,7 +60,12 @@ export class Repository {
     q = q.trim();
     const command = q.split(" ")[0];
     return (
-      q.replace("%t", this._tableName) + (returning && command !== "SELECT" ? ` RETURNING *` : ``)
+      q.replace("%t", this._tableName) +
+      (returning &&
+      !command.toUpperCase().includes("SELECT") &&
+      !command.toUpperCase().includes("WITH")
+        ? ` RETURNING *`
+        : ``)
     );
   }
 }

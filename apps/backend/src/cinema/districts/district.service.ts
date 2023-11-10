@@ -74,33 +74,50 @@ export class DistrictService {
   }
 
   async getTopFilmsByDistrict(counter: number) {
-    const response = await this.database.query(
-      `
-        SELECT cinema_name as "Название кинотеатра",
-               film_name as "Название фильма",
-               total_tickets_sold as "Количестов проданных билетов"
-        FROM (SELECT c.name                                                                                     as cinema_name,
-                     f.name                                                                                     as film_name,
-                     SUM(s.ticketsSold + s.ticketsOnline)                                                       AS total_tickets_sold,
-                     ROW_NUMBER() OVER (PARTITION BY c.name ORDER BY SUM(s.ticketsSold + s.ticketsOnline) DESC) as rn
-              FROM sessions s
-                     JOIN films f ON s.filmId = f.id
-                     JOIN cinemas c ON s.cinemaId = c.id
-              GROUP BY c.name, f.name) t
-        WHERE rn <= $1;
-      `,
-      [counter],
-    );
+    // const response = await this.database.query(
+    //   `
+    //     SELECT cinema_name        as "Название кинотеатра",
+    //            film_name          as "Название фильма",
+    //            total_tickets_sold as "Количестов проданных билетов"
+    //     FROM (SELECT c.name                                                                                     as cinema_name,
+    //                  f.name                                                                                     as film_name,
+    //                  SUM(s.ticketsSold + s.ticketsOnline)                                                       AS total_tickets_sold,
+    //                  ROW_NUMBER() OVER (PARTITION BY c.name ORDER BY SUM(s.ticketsSold + s.ticketsOnline) DESC) as rn
+    //           FROM sessions s
+    //                  JOIN films f ON s.filmId = f.id
+    //                  JOIN cinemas c ON s.cinemaId = c.id
+    //           GROUP BY c.name, f.name) t
+    //     WHERE rn <= $1;
+    //   `,
+    //   [counter],
+    // );
+    const response = await this.database.query(`
+      WITH ranked_films AS (SELECT c.districtId,
+                                   s.filmId,
+                                   RANK() OVER (PARTITION BY c.districtId ORDER BY s.ticketsSold DESC) AS film_rank
+                            FROM sessions s
+                                   JOIN cinemas c ON s.cinemaId = c.id)
+      SELECT r.districtId AS "ID района",
+             d.name       AS "Название района",
+             r.filmId     AS "ID фильма",
+             f.name       AS "Название фильма",
+      FROM ranked_films r
+             JOIN districts d ON r.districtId = d.id
+             JOIN films f ON r.filmId = f.id
+      WHERE r.film_rank <= 5;`);
 
     return response;
   }
 
   async requestWithUnion() {
-    const response = await this.database.query(`
-    (select name as "Название района" from districts)
-    union
-    (select name "Тип кинотеатра" from cinema_types);
-    `);
+    const response = await this.database.query(
+      `
+        SELECT name AS "Название", 'Фильм' AS "Тип"
+        FROM films
+        UNION
+        SELECT name AS "Название", 'Кинотеатр' AS "Тип"
+        FROM cinemas;    `,
+    );
 
     return response;
   }

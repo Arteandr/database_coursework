@@ -24,7 +24,6 @@ export class QualitiesController {
   @Post()
   async create(@Body() dto: NameDto) {
     const quality = await this.qualitiesService.create(dto);
-    console.log(quality);
 
     return new CustomResponse(quality, HttpStatus.CREATED);
   }
@@ -36,19 +35,19 @@ export class QualitiesController {
     return new CustomResponse(qualities);
   }
 
+  @Get("/finalRequestGroupsData/:count")
+  async getFinalRequestGroupsData(@Param("count", new ParseIntPipe()) count: number) {
+    const response = await this.qualitiesService.finalRequestGroupsData(count);
+
+    return new CustomResponse(response);
+  }
+
   @Get(":id")
   async getOne(@Param("id", new ParseIntPipe()) id: number) {
     const quality = await this.qualitiesService.getOne(+id);
     if (!quality) throw QualitiesController.NotFound;
 
     return new CustomResponse(quality);
-  }
-
-  @Get("/finalRequestGroupsData")
-  async getFinalRequestGroupsData() {
-    const response = await this.qualitiesService.finalRequestGroupsData();
-
-    return new CustomResponse(response);
   }
 
   @Put(":id")

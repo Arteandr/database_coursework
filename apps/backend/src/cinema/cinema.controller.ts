@@ -36,14 +36,6 @@ export class CinemaController {
     return new CustomResponse(cinemas);
   }
 
-  @Get("/:id")
-  async getCinema(@Param("id", new ParseIntPipe()) id: number) {
-    const cinema = await this.cinemaService.getOne(id);
-    if (!cinema) throw CinemaController.NotFound;
-
-    return new CustomResponse(cinema);
-  }
-
   @Get("/generate/:count")
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const cinemas = await this.cinemaService.generate(count);
@@ -51,9 +43,9 @@ export class CinemaController {
     return new CustomResponse(cinemas);
   }
 
-  @Get("/finalRequestWithGroups")
-  async getFinalRequestWithGroups() {
-    const response = await this.cinemaService.finalRequestWithGroups();
+  @Get("/finalRequestWithGroups/:count")
+  async getFinalRequestWithGroups(@Param("count", new ParseIntPipe()) count: number) {
+    const response = await this.cinemaService.finalRequestWithGroups(count);
 
     return new CustomResponse(response);
   }
@@ -78,6 +70,14 @@ export class CinemaController {
       await this.cinemaService.generateAverageNumberOfViewersForAllCinemasInEachDist();
 
     return new CustomResponse(response);
+  }
+
+  @Get("/:id")
+  async getCinema(@Param("id", new ParseIntPipe()) id: number) {
+    const cinema = await this.cinemaService.getOne(id);
+    if (!cinema) throw CinemaController.NotFound;
+
+    return new CustomResponse(cinema);
   }
 
   @Put("/:id")

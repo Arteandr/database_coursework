@@ -14,7 +14,7 @@ export class CinemaTypesService {
     const cinemaType = (
       await this.database.query<CinemaTypeEntity>(
         `INSERT INTO %t (name)
-         VALUES ($1)`,
+        VALUES ($1)`,
         [dto.name],
         CinemaTypeEntity,
       )
@@ -25,8 +25,8 @@ export class CinemaTypesService {
 
   async getAll() {
     const cinemaTypes = await this.database.query<CinemaTypeEntity>(
-      `SELECT *
-       FROM %t
+      `SELECT ct.id, ct.name
+       FROM cinema_types as ct
        ORDER BY id DESC`,
       null,
       CinemaTypeEntity,
@@ -39,8 +39,8 @@ export class CinemaTypesService {
     const cinemaType = (
       await this.database.query(
         `SELECT *
-                                 FROM %t
-                                 WHERE id=$1`,
+         FROM %t
+         WHERE id=$1`,
         [id],
         CinemaTypeEntity,
       )
@@ -53,8 +53,7 @@ export class CinemaTypesService {
     const cinemaType = (
       await this.database.query(
         `UPDATE %t
-         SET name =$1
-         WHERE id=$2`,
+        SET name = $1 WHERE id=$2`,
         [dto.name, id],
         CinemaTypeEntity,
       )
