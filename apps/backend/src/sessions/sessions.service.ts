@@ -115,7 +115,7 @@ export class SessionsService {
     while (dtos.length < count) {
       const ticketsSold = Utils.GetRandomFromRange(5, 10000);
       const dto = new CreateSessionDto({
-        date: fakerRU.date.future({ years: 1 }),
+        date: fakerRU.date.between({ from: new Date("2000"), to: new Date() }),
         ticketsSold,
         ticketsOnline: fakerRU.number.int({ max: ticketsSold }),
         price: Utils.GetRandomFromRange(100, 800),

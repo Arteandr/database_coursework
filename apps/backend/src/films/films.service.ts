@@ -78,15 +78,67 @@ export class FilmsService {
       FROM films
              LEFT JOIN (SELECT id, firstName, lastName
                         FROM directors) AS directors
-                       ON films.directorId = directors.id;`);
+                       ON films.directorId = directors.id;
+    `);
+
+    return response;
+  }
+
+  async finalBySpecificValue(duration: number) {
+    const response = await this.database.query(
+      `
+        SELECT f.duration AS "Длительность фильма",
+               COUNT(*)   AS "Количество фильмов"
+        FROM films f
+        WHERE f.duration > $1
+        GROUP BY f.duration;
+      `,
+      [duration],
+    );
+
+    return response;
+  }
+
+  async finalBySpecificMask(text: string) {
+    text = `%${text}%`;
+    const response = await this.database.query(
+      `
+        SELECT count(*) as "Количество фильмов"
+        FROM films
+        WHERE films.name LIKE $1;
+      `,
+      [text],
+    );
+
+    return response;
+  }
+
+  async finalByIndex() {
+    const response = await this.database.query(`
+      SELECT directorid as "Идентификатор режиссера",
+             COUNT(*)   AS "Количество фильмов"
+      FROM films
+      GROUP BY directorid;
+    `);
+
+    return response;
+  }
+
+  async finalWithoutIndex() {
+    const response = await this.database.query(`
+      SELECT creationYear as "Год создания фильмов",
+             COUNT(*)     AS "Количество фильмов"
+      FROM films
+      GROUP BY creationYear;
+    `);
 
     return response;
   }
 
   async getAllCount() {
     const response = await this.database.query(`
-      SELECT count(*) as "Общее количество фильмов"
-      from films;
+      SELECT count(*) AS "Общее количество фильмов"
+      FROM films;
     `);
     console.log(response);
 
@@ -147,10 +199,12 @@ export class FilmsService {
   async requestWithFinalData(id: number) {
     const response = await this.database.query(
       `
-        SELECT COUNT(*)                                                              as                             "Общее количество фильмов",
+        SELECT COUNT(*)                                as                             "Общее количество фильмов",
                (SELECT COUNT(*)
                 FROM films
-                WHERE directorId IN (SELECT id FROM directors as d WHERE d.id = $1)) as "Фильмы режиссера с ID ${id}"
+                WHERE directorId IN (SELECT id
+                                     FROM directors as d
+                                     WHERE d.id = $1)) as "Фильмы режиссера с ID ${id}"
         FROM films;
       `,
       [id],
@@ -161,7 +215,7 @@ export class FilmsService {
 
   async requestWithCase() {
     const response = await this.database.query(`
-      SELECT name     "Имя фильма",
+      SELECT name  as "Имя фильма",
              CASE
                WHEN duration > 120 THEN 'Длинный'
                WHEN duration > 60 THEN 'Средний'
@@ -200,6 +254,23 @@ export class FilmsService {
       [studioId],
       null,
       null,
+    );
+
+    return response;
+  }
+
+  async symmetricWithACondByAForeignKeySecond(id: number) {
+    const response = await this.database.query(
+      `
+        select c.name    as "Название кинотеатра",
+               c.address as "Адрес кинотеатра",
+               c.phone   as "Телефон кинотеатра",
+               d.name    as "Название района"
+        from cinemas c
+               inner join districts d on d.id = c.districtid
+        where c.districtid = $1;
+      `,
+      [id],
     );
 
     return response;

@@ -26,11 +26,12 @@ export class QualitiesService {
   async finalRequestGroupsData(count: number) {
     const response = await this.database.query(
       `
-      SELECT film_qualities.name AS "Качество пленки", COUNT(*) AS "Количество фильмов"
-      FROM films
-             JOIN film_qualities ON films.qualityId = film_qualities.id
-      WHERE films.creationYear > $1
-      GROUP BY film_qualities.name;`,
+        SELECT film_qualities.name AS "Качество пленки", COUNT(*) AS "Количество фильмов"
+        FROM films
+               JOIN film_qualities ON films.qualityId = film_qualities.id
+        WHERE films.creationYear > $1
+        GROUP BY film_qualities.name;
+      `,
       [count],
     );
 

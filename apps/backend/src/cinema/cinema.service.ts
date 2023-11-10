@@ -8,6 +8,7 @@ import { Utils } from "../shared/utils";
 import { faker } from "@faker-js/faker/locale/ru";
 import { DistrictService } from "./districts/district.service";
 import { CinemaTypesService } from "./types/cinema.types.service";
+import { fakerRU } from "@faker-js/faker";
 
 @Injectable()
 export class CinemaService {
@@ -22,9 +23,11 @@ export class CinemaService {
   async create(dto: CreateCinemaDto) {
     const cinema = (
       await this.database.query<CinemaEntity>(
-        `INSERT INTO %t (name, address, phone, license, licenseEnd,
-                         seats, online, typeId, districtId)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        `
+          INSERT INTO %t (name, address, phone, license, licenseEnd,
+                          seats, online, typeId, districtId)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `,
         [
           dto.name,
           dto.address,
@@ -108,7 +111,8 @@ export class CinemaService {
                JOIN cinemas ON sessions.cinemaId = cinemas.id
                JOIN cinema_types ON cinemas.typeId = cinema_types.id
         WHERE sessions.price > $1
-        GROUP BY cinema_types.name;`,
+        GROUP BY cinema_types.name;
+      `,
       [count],
     );
 
@@ -145,7 +149,8 @@ export class CinemaService {
       FROM cinemas c
              INNER JOIN districts d ON c.districtId = d.id
              INNER JOIN sessions s ON c.id = s.cinemaId
-      GROUP BY d.name;`);
+      GROUP BY d.name;
+    `);
 
     return response;
   }
@@ -157,14 +162,7 @@ export class CinemaService {
     while (dtos.length < count) {
       const dto = new CreateCinemaDto({
         name: faker.lorem.words({ min: 2, max: 4 }),
-        address: Utils.GetRandomFromArray([
-          "Донецк",
-          "Москва",
-          "Ереван",
-          "Вроцлав",
-          "Самара",
-          "Омск",
-        ]),
+        address: fakerRU.location.streetAddress(),
         phone: "+7949" + faker.number.int({ min: 1000000, max: 9999999 }),
         license: "№" + faker.number.int(),
         licenseEnd: faker.date.past({ years: 100 }),
@@ -180,6 +178,23 @@ export class CinemaService {
     }
 
     return dtos;
+  }
+
+  async symmetricInnerJoinWithDateSecond(date: Date) {
+    const response = await this.database.query(
+      `
+        select c.id         as "Идентификатор кинотеатра",
+               c.name       as "Название кинотеатра",
+               c.licenseend as "Дата истечения лицензии"
+        from sessions s
+               inner join cinemas c on c.id = s.cinemaid
+        where c.licenseend > $1
+        order by c.licenseend desc;
+      `,
+      [date.toISOString()],
+    );
+
+    return response;
   }
 
   async getTopFilmsByCinema(count: number) {

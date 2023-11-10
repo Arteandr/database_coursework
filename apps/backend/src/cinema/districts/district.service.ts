@@ -100,11 +100,12 @@ export class DistrictService {
       SELECT r.districtId AS "ID района",
              d.name       AS "Название района",
              r.filmId     AS "ID фильма",
-             f.name       AS "Название фильма",
+             f.name       AS "Название фильма"
       FROM ranked_films r
              JOIN districts d ON r.districtId = d.id
              JOIN films f ON r.filmId = f.id
-      WHERE r.film_rank <= 5;`);
+      WHERE r.film_rank <= 5;
+    `);
 
     return response;
   }
@@ -116,7 +117,8 @@ export class DistrictService {
         FROM films
         UNION
         SELECT name AS "Название", 'Кинотеатр' AS "Тип"
-        FROM cinemas;    `,
+        FROM cinemas;
+      `,
     );
 
     return response;

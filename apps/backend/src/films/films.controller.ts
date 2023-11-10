@@ -58,6 +58,42 @@ export class FilmsController {
     return new CustomResponse(response);
   }
 
+  @Get("/symmetricForeignSecond/:id")
+  async getSymForeignSecond(@Param("id", new ParseIntPipe()) id: number) {
+    const response = await this.filmsService.symmetricWithACondByAForeignKeySecond(id);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/finalBySpecificMask/:id")
+  async getFinalBySpecificMask(@Param() params) {
+    const response = await this.filmsService.finalBySpecificMask(params["id"]);
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/finalByIndex")
+  async getFinalByIndex() {
+    const response = await this.filmsService.finalByIndex();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/finalWithoutIndex")
+  async getFinalWithoutIndex() {
+    const response = await this.filmsService.finalWithoutIndex();
+
+    return new CustomResponse(response);
+  }
+
+  @Get("/finalBySpecificValue/:id")
+  async getFinalBySpecificValue(@Param() params) {
+    if (!params["id"]) return;
+    const response = await this.filmsService.finalBySpecificValue(params["id"]);
+
+    return new CustomResponse(response);
+  }
+
   @Get("/requestOnRequestLeft")
   async getRequestOnRequestLeft() {
     const response = await this.filmsService.requestOnRequest();

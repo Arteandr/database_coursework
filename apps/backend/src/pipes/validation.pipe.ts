@@ -11,6 +11,7 @@ import { validate } from "class-validator";
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   async transform(value: any, metadata: ArgumentMetadata) {
+    console.log("validation pipe ");
     const obj = plainToClass(metadata.metatype, value);
 
     if (metadata.metatype.toString() == "function Object() { [native code] }") return value;
@@ -21,6 +22,7 @@ export class ValidationPipe implements PipeTransform<any> {
       errors.forEach((err) => (messages[err.property] = Object.values(err.constraints)));
       throw new HttpException(messages, HttpStatus.BAD_REQUEST);
     }
+    console.log("validation errors: ", errors);
 
     return value;
   }

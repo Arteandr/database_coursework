@@ -43,6 +43,17 @@ export class CinemaController {
     return new CustomResponse(cinemas);
   }
 
+  @Get("/symmetricDateSecond/:date")
+  async getSymmetricDateSecond(@Param() params) {
+    if (!params["date"]) return;
+
+    const response = await this.cinemaService.symmetricInnerJoinWithDateSecond(
+      new Date(params["date"]),
+    );
+
+    return new CustomResponse(response);
+  }
+
   @Get("/finalRequestWithGroups/:count")
   async getFinalRequestWithGroups(@Param("count", new ParseIntPipe()) count: number) {
     const response = await this.cinemaService.finalRequestWithGroups(count);

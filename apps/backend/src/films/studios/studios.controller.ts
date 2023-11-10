@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { StudiosService } from "./studios.service";
 import { CreateStudioDto } from "./dto/create-studio.dto";
-import { SymmetricDateFirstDto, UpdateStudioDto } from "./dto/update-studio.dto";
+import { UpdateStudioDto } from "./dto/update-studio.dto";
 import { CustomResponse } from "../../shared/response";
 
 @Controller("/studios")
@@ -32,12 +32,14 @@ export class StudiosController {
     return new CustomResponse(response);
   }
 
-  @Get("/symmetricDateFirst")
-  async getSymDateFirst(@Body() dto: SymmetricDateFirstDto) {
+  @Get("/symmetricDateFirst/:date")
+  async getSymDateFirst(@Param() params) {
+    const date = params["date"].split(" ");
     const response = await this.studiosService.symmetricJoinWithAConditionByADate(
-      dto.firstDate,
-      dto.secondDate,
+      new Date(date[0]),
+      new Date(`${Number(date[1]) + 1}`),
     );
+    console.log("RESPONSE: ", response);
 
     return new CustomResponse(response);
   }

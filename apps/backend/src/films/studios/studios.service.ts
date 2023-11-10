@@ -57,14 +57,20 @@ export class StudiosService {
   }
 
   async symmetricJoinWithAConditionByADate(studioDateStart: Date, studioDateEnd: Date) {
+    console.log(studioDateStart.toISOString(), studioDateEnd.toISOString());
     const response = await this.database.query(
       `
-        select s.date as session_date, f.name as film
-        from sessions s
-               inner join films f on s.filmid = f.id
-        where s.date between $1 and $2;
+        SELECT sessions.id   as "ID сеанса",
+               films.name    as "Название фильма",
+               cinemas.name  as "Название кинотеатра",
+               sessions.date as "Дата сеанса"
+        FROM sessions
+               INNER JOIN films ON sessions.filmId = films.id
+               INNER JOIN cinemas ON sessions.cinemaId = cinemas.id
+        WHERE sessions.date BETWEEN $1 AND $2
+        ORDER BY sessions.date DESC;
       `,
-      [studioDateStart, studioDateEnd],
+      [studioDateStart.toISOString(), studioDateEnd.toISOString()],
     );
 
     return response;
@@ -73,9 +79,10 @@ export class StudiosService {
   async symmetricJoinWithoutConditionThird() {
     const response = await this.database.query(
       `
-        SELECT S.name as studio_name, C.name as country_name
+        SELECT S.name as "Название студии", C.name as "Страна"
         FROM studios S
-               INNER JOIN countries C ON S.countryId = C.id;      `,
+               INNER JOIN countries C ON S.countryId = C.id;
+      `,
     );
 
     return response;
@@ -88,7 +95,8 @@ export class StudiosService {
                cinemas.name AS "Название кинотеатра"
         FROM films
                RIGHT JOIN sessions ON films.id = sessions.filmId
-               LEFT JOIN cinemas ON sessions.cinemaId = cinemas.id;      `,
+               LEFT JOIN cinemas ON sessions.cinemaId = cinemas.id;
+      `,
     );
 
     return response;

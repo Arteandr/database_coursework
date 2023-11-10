@@ -12,6 +12,11 @@ create table cinemas
   districtId int references districts (id) on delete cascade    not null
 );
 
+create view cinemas_view as
+select *
+from cinemas;
+
+
 create table session_types
 (
   id     serial primary key not null unique,

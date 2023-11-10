@@ -149,3 +149,8 @@ create table films
   studioId     int references studios (id) on delete cascade        not null
 );
 
+create or replace view mod_films as
+select f.name        as "Название фильма",
+       f.description as "Описание фильма",
+       f.photo       as "Афиша фильма"
+from films as f;

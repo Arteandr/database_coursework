@@ -8,6 +8,7 @@ import * as process from "process";
 import { AllFilter } from "./filters/all.filter";
 import { Repository } from "./repositories/repository";
 import { ValidationPipe } from "./pipes/validation.pipe";
+import { useContainer } from "class-validator";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
   const globalPrefix = "api";
   app.setGlobalPrefix(globalPrefix);
   app.enableCors();
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const port = process.env.BACKEND_PORT || 3000;
 
   const httpAdapter = app.get(HttpAdapterHost);
