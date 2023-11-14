@@ -1,7 +1,7 @@
-import { IsDate, IsNumber } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateSessionDto {
-  @IsDate({ message: "Дата сеанса указана неверно" })
+  @IsString({ message: "Дата сеанса указана неверно" })
   date: Date;
 
   @IsNumber({}, { message: "Количество проданных билетов должно быть числом" })

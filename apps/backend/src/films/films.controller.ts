@@ -72,16 +72,16 @@ export class FilmsController {
     return new CustomResponse(response);
   }
 
-  @Get("/finalByIndex")
-  async getFinalByIndex() {
-    const response = await this.filmsService.finalByIndex();
+  @Get("/finalByIndex/:id")
+  async getFinalByIndex(@Param("id", new ParseIntPipe()) id: number) {
+    const response = await this.filmsService.finalByIndex(id);
 
     return new CustomResponse(response);
   }
 
-  @Get("/finalWithoutIndex")
-  async getFinalWithoutIndex() {
-    const response = await this.filmsService.finalWithoutIndex();
+  @Get("/finalWithoutIndex/:year")
+  async getFinalWithoutIndex(@Param("year", new ParseIntPipe()) year: number) {
+    const response = await this.filmsService.finalWithoutIndex(year);
 
     return new CustomResponse(response);
   }
@@ -139,7 +139,7 @@ export class FilmsController {
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const films = await this.filmsService.generate(count);
 
-    return new CustomResponse(films);
+    // return new CustomResponse(films);
   }
 
   @Get(":id")

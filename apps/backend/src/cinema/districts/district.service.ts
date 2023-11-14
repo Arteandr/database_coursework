@@ -25,11 +25,10 @@ export class DistrictService {
 
   async getAll() {
     const districts = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      DistrictEntity,
+      `SELECT d.id   as "id",
+              d.name as "Название"
+       FROM districts d
+       ORDER BY d.id DESC`,
     );
 
     return districts;

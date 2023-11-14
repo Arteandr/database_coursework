@@ -27,11 +27,11 @@ export class DirectorsService {
 
   async getAll() {
     const directors = await this.database.query(
-      `SELECT *
-       FROM %t
+      `SELECT d.id        as "id",
+              d.firstname as "Имя",
+              d.lastname  as "Фамилия"
+       FROM directors d
        ORDER BY id DESC`,
-      null,
-      DirectorEntity,
     );
 
     return directors;

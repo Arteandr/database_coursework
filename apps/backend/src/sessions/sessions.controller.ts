@@ -39,7 +39,7 @@ export class SessionsController {
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const sessions = await this.sessionsService.generate(count);
 
-    return new CustomResponse(sessions);
+    // return new CustomResponse(sessions);
   }
 
   @Get("/symmetricWithoutCondSecond")

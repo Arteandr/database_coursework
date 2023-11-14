@@ -39,8 +39,8 @@ export class CinemaController {
   @Get("/generate/:count")
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const cinemas = await this.cinemaService.generate(count);
-
-    return new CustomResponse(cinemas);
+    //
+    // return new CustomResponse(cinemas);
   }
 
   @Get("/symmetricDateSecond/:date")

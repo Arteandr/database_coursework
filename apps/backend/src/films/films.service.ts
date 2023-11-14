@@ -8,7 +8,6 @@ import { Utils } from "../shared/utils";
 import { DirectorsService } from "./directors/directors.service";
 import { QualitiesService } from "./qualities/qualities.service";
 import { StudiosService } from "./studios/studios.service";
-import { faker } from "@faker-js/faker/locale/ru";
 
 @Injectable()
 export class FilmsService {
@@ -46,11 +45,23 @@ export class FilmsService {
 
   async getAll() {
     const films = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      FilmEntity,
+      `SELECT f.id           as "id",
+              f.name         as "Название",
+              f.description  as "Описание",
+              f.photo        as "Ссылка на фото",
+              f.creationyear as "Год выпуска",
+              f.duration     as "Длительность",
+              d.lastname     as "Фамилия режиссера",
+              d.id           as "Фамилия режиссера ID",
+              s.name         as "Название студии",
+              s.id           as "Название студии ID",
+              fq.name        as "Качество",
+              fq.id          as "Качество ID"
+       FROM films as f
+              INNER JOIN directors as d on f.directorid = d.id
+              INNER JOIN studios as s on f.studioid = s.id
+              INNER JOIN film_qualities as fq on f.qualityid = fq.id
+       ORDER BY f.id DESC`,
     );
 
     return films;
@@ -113,24 +124,32 @@ export class FilmsService {
     return response;
   }
 
-  async finalByIndex() {
-    const response = await this.database.query(`
-      SELECT directorid as "Идентификатор режиссера",
-             COUNT(*)   AS "Количество фильмов"
-      FROM films
-      GROUP BY directorid;
-    `);
+  async finalByIndex(directorId: number) {
+    const response = await this.database.query(
+      `
+        SELECT directorid as "Идентификатор режиссера",
+               COUNT(*)   AS "Количество фильмов"
+        FROM films
+        WHERE directorid = $1
+        GROUP BY directorid;
+      `,
+      [directorId],
+    );
 
     return response;
   }
 
-  async finalWithoutIndex() {
-    const response = await this.database.query(`
-      SELECT creationYear as "Год создания фильмов",
-             COUNT(*)     AS "Количество фильмов"
-      FROM films
-      GROUP BY creationYear;
-    `);
+  async finalWithoutIndex(year: number) {
+    const response = await this.database.query(
+      `
+        SELECT creationYear as "Год создания фильмов",
+               COUNT(*)     AS "Количество фильмов"
+        FROM films
+        WHERE creationyear = $1
+        GROUP BY creationYear;
+      `,
+      [year],
+    );
 
     return response;
   }
@@ -305,48 +324,48 @@ export class FilmsService {
   }
 
   async generateDTO(count: number, directorIds, studioIds, qualityIds: number[]) {
-    const dtos: CreateFilmDto[] = [];
-    const usedNames = new Set<string>();
-    (await this.getAll()).map((film) => usedNames.add(film.name));
-    while (dtos.length < count) {
-      const dto = new CreateFilmDto({
-        name: faker.lorem.words({ min: 2, max: 4 }),
-        description: faker.lorem.words(10),
-        photo: faker.lorem.word() + ".jpg",
-        creationYear: faker.number.int({ max: 2023, min: 1990 }),
-        duration: faker.number.int({ max: 10000, min: 100 }),
-        directorId: Utils.GetRandomFromArray(directorIds),
-        qualityId: Utils.GetRandomFromArray(qualityIds),
-        studioId: Utils.GetRandomFromArray(studioIds),
-      });
-
-      if (!usedNames.has(dto.name)) {
-        dtos.push(dto);
-        usedNames.add(dto.name);
-      }
-    }
-
-    return dtos;
+    // const dtos: CreateFilmDto[] = [];
+    // const usedNames = new Set<string>();
+    // (await this.getAll()).map((film) => usedNames.add(film.name));
+    // while (dtos.length < count) {
+    //   const dto = new CreateFilmDto({
+    //     name: faker.lorem.words({ min: 2, max: 4 }),
+    //     description: faker.lorem.words(10),
+    //     photo: faker.lorem.word() + ".jpg",
+    //     creationYear: faker.number.int({ max: 2023, min: 1990 }),
+    //     duration: faker.number.int({ max: 10000, min: 100 }),
+    //     directorId: Utils.GetRandomFromArray(directorIds),
+    //     qualityId: Utils.GetRandomFromArray(qualityIds),
+    //     studioId: Utils.GetRandomFromArray(studioIds),
+    //   });
+    //
+    //   if (!usedNames.has(dto.name)) {
+    //     dtos.push(dto);
+    //     usedNames.add(dto.name);
+    //   }
+    // }
+    //
+    // return dtos;
   }
 
   async generate(count: number) {
-    const directorIds = (await this.directorsService.getAll()).map((director) => director.id);
-    const qualityIds = (await this.qualitiesService.getAll()).map((quality) => quality.id);
-    const studioIds = (await this.studiosService.getAll()).map((studio) => studio.id);
-    if (directorIds.length < 1 || qualityIds.length < 1 || studioIds.length < 1)
-      throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
-    const promises = (await this.generateDTO(count, directorIds, studioIds, qualityIds)).map(
-      (dto) => this.create(dto),
-    );
-
-    try {
-      await Promise.all(promises);
-    } catch (error) {
-      throw new HttpException(
-        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-    return [];
+    //   const directorIds = (await this.directorsService.getAll()).map((director) => director.id);
+    //   const qualityIds = (await this.qualitiesService.getAll()).map((quality) => quality.id);
+    //   const studioIds = (await this.studiosService.getAll()).map((studio) => studio.id);
+    //   if (directorIds.length < 1 || qualityIds.length < 1 || studioIds.length < 1)
+    //     throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
+    //   const promises = (await this.generateDTO(count, directorIds, studioIds, qualityIds)).map(
+    //     (dto) => this.create(dto),
+    //   );
+    //
+    //   try {
+    //     await Promise.all(promises);
+    //   } catch (error) {
+    //     throw new HttpException(
+    //       `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    //   return [];
   }
 }

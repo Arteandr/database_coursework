@@ -6,7 +6,6 @@ import { Repository } from "../../repositories/repository";
 import { StudioEntity } from "../../entities/films";
 import { Utils } from "../../shared/utils";
 import { CountriesService } from "../countries/countries.service";
-import { faker } from "@faker-js/faker/locale/ru";
 
 @Injectable()
 export class StudiosService {
@@ -32,11 +31,14 @@ export class StudiosService {
 
   async getAll() {
     const studios = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      StudioEntity,
+      `SELECT s.id           as "id",
+              s.name         as "Название",
+              s.creationyear as "Год основания",
+              c.name         as "Страна основания",
+              c.id           as "Страна основания ID"
+       FROM studios s
+              inner join countries c on c.id = s.countryid
+       ORDER BY s.id DESC`,
     );
 
     return studios;
@@ -133,38 +135,38 @@ export class StudiosService {
   }
 
   async generateDTO(count: number, countryIds: number[]) {
-    const dtos: CreateStudioDto[] = [];
-    const usedNames = new Set<string>();
-    (await this.getAll()).map((studio) => usedNames.add(studio.name));
-    while (dtos.length < count) {
-      const dto = new CreateStudioDto({
-        name: faker.lorem.words({ min: 2, max: 4 }),
-        creationYear: faker.number.int({ min: 1900, max: 2023 }),
-        countryId: Utils.GetRandomFromArray(countryIds),
-      });
-
-      if (!usedNames.has(dto.name)) {
-        dtos.push(dto);
-        usedNames.add(dto.name);
-      }
-    }
-
-    return dtos;
+    // const dtos: CreateStudioDto[] = [];
+    // const usedNames = new Set<string>();
+    // (await this.getAll()).map((studio) => usedNames.add(studio.name));
+    // while (dtos.length < count) {
+    //   const dto = new CreateStudioDto({
+    //     name: faker.lorem.words({ min: 2, max: 4 }),
+    //     creationYear: faker.number.int({ min: 1900, max: 2023 }),
+    //     countryId: Utils.GetRandomFromArray(countryIds),
+    //   });
+    //
+    //   if (!usedNames.has(dto.name)) {
+    //     dtos.push(dto);
+    //     usedNames.add(dto.name);
+    //   }
+    // }
+    //
+    // return dtos;
   }
 
   async generate(count: number) {
-    const countryIds = (await this.countryService.getAll()).map((country) => country.id);
-    const promises = (await this.generateDTO(count, countryIds)).map((dto) => this.create(dto));
-
-    try {
-      await Promise.all(promises);
-    } catch (error) {
-      throw new HttpException(
-        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return [];
+    // const countryIds = (await this.countryService.getAll()).map((country) => country.id);
+    // const promises = (await this.generateDTO(count, countryIds)).map((dto) => this.create(dto));
+    //
+    // try {
+    //   await Promise.all(promises);
+    // } catch (error) {
+    //   throw new HttpException(
+    //     `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+    //     HttpStatus.INTERNAL_SERVER_ERROR,
+    //   );
+    // }
+    //
+    // return [];
   }
 }

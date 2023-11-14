@@ -27,11 +27,11 @@ export class SessionTypesService {
 
   async getAll() {
     const sessionTypes = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      SessionTypeEntity,
+      `SELECT st.id     as "id",
+              st.name   as "Название",
+              st.ration as "Коэффициент"
+       FROM session_types st
+       ORDER BY st.id DESC`,
     );
 
     return sessionTypes;

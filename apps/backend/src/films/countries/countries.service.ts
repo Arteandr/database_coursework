@@ -25,11 +25,10 @@ export class CountriesService {
 
   async getAll() {
     const countries = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      CountryEntity,
+      `SELECT c.id   as "id",
+              c.name as "Название"
+       FROM countries c
+       ORDER BY c.id DESC`,
     );
 
     return countries;

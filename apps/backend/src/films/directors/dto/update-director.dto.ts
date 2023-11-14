@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDirectorDto } from './create-director.dto';
+import { IsString } from "class-validator";
 
-export class UpdateDirectorDto extends PartialType(CreateDirectorDto) {}
+export class UpdateDirectorDto {
+  @IsString({ message: "Имя режиссера должно быть строкой" })
+  firstName: string;
+
+  @IsString({ message: "Фамилия режиссера должно быть строкой" })
+  lastName: string;
+}

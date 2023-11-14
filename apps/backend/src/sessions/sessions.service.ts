@@ -44,11 +44,22 @@ export class SessionsService {
 
   async getAll() {
     const sessions = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      SessionEntity,
+      `SELECT s.id            as "id",
+              s.date          as "Дата сеанса",
+              s.ticketssold   as "Проданные билеты",
+              s.ticketsonline as "Проданные билеты онлайн",
+              s.price         as "Стоимость",
+              f.name          as "Название фильма",
+              f.id            as "Название фильма ID",
+              c.name          as "Название кинотеатра",
+              c.id            as "Название кинотеатра ID",
+              st.name         as "Тип",
+              st.id           as "Тип ID"
+       FROM sessions as s
+              INNER JOIN cinemas c on c.id = s.cinemaid
+              INNER JOIN session_types st on st.id = s.typeid
+              INNER Join films f on f.id = s.filmid
+       ORDER BY s.id DESC`,
     );
 
     return sessions;
@@ -132,23 +143,23 @@ export class SessionsService {
   }
 
   async generate(count: number) {
-    const filmIds = (await this.filmsService.getAll()).map((obj) => obj.id);
-    const cinemaIds = (await this.cinemasService.getAll()).map((obj) => obj.id);
-    const typeIds = (await this.typesService.getAll()).map((obj) => obj.id);
-    if (filmIds.length < 1 || cinemaIds.length < 1 || typeIds.length < 1)
-      throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
-    const promises = (await this.generateDTO(count, filmIds, cinemaIds, typeIds)).map((dto) =>
-      this.create(dto),
-    );
-
-    try {
-      await Promise.all(promises);
-    } catch (error) {
-      throw new HttpException(
-        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-    return [];
+    //   // const filmIds = (await this.filmsService.getAll()).map((obj) => obj.id);
+    //   const cinemaIds = (await this.cinemasService.getAll()).map((obj) => obj.id);
+    //   const typeIds = (await this.typesService.getAll()).map((obj) => obj.id);
+    //   if (filmIds.length < 1 || cinemaIds.length < 1 || typeIds.length < 1)
+    //     throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
+    //   const promises = (await this.generateDTO(count, filmIds, cinemaIds, typeIds)).map((dto) =>
+    //     this.create(dto),
+    //   );
+    //
+    //   try {
+    //     await Promise.all(promises);
+    //   } catch (error) {
+    //     throw new HttpException(
+    //       `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    //   return [];
   }
 }

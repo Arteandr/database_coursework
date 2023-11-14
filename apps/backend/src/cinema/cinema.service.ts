@@ -5,10 +5,8 @@ import { Repository } from "../repositories/repository";
 import { CreateCinemaDto } from "./dto/create-cinema.input";
 import { CinemaEntity } from "../entities/cinema";
 import { Utils } from "../shared/utils";
-import { faker } from "@faker-js/faker/locale/ru";
 import { DistrictService } from "./districts/district.service";
 import { CinemaTypesService } from "./types/cinema.types.service";
-import { fakerRU } from "@faker-js/faker";
 
 @Injectable()
 export class CinemaService {
@@ -48,11 +46,24 @@ export class CinemaService {
 
   async getAll() {
     const cinemas = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      CinemaEntity,
+      `SELECT c.id         as "id",
+              c.name       as "Название",
+              c.address    as "Адрес",
+              c.phone      as "Номер телефона",
+              c.license    as "Номер лицензии",
+              c.licenseend as "Дата окончания лицензии",
+              c.seats      as "Кол-во сидений",
+              c.online     as "Возможно покупки онлайн",
+              ct.name      as "Тип",
+              ct.id        as "Тип ID",
+              d.name       as "Район",
+              d.id         as "Район ID"
+       FROM cinemas c
+              inner join districts d
+                         on d.id = c.districtid
+              inner join cinema_types ct
+                         on ct.id = c.typeid
+       ORDER BY c.id DESC`,
     );
 
     return cinemas;
@@ -156,28 +167,28 @@ export class CinemaService {
   }
 
   async generateDTO(count: number, typeIds, districtIds: number[]) {
-    const dtos: CreateCinemaDto[] = [];
-    const usedNames = new Set<string>();
-    (await this.getAll()).map((film) => usedNames.add(film.name));
-    while (dtos.length < count) {
-      const dto = new CreateCinemaDto({
-        name: faker.lorem.words({ min: 2, max: 4 }),
-        address: fakerRU.location.streetAddress(),
-        phone: "+7949" + faker.number.int({ min: 1000000, max: 9999999 }),
-        license: "№" + faker.number.int(),
-        licenseEnd: faker.date.past({ years: 100 }),
-        seats: Utils.GetRandomFromRange(5, 100),
-        online: Utils.GetRandomFromArray([true, false]),
-        typeId: Utils.GetRandomFromArray(typeIds),
-        districtId: Utils.GetRandomFromArray(districtIds),
-      });
-      if (!usedNames.has(dto.name)) {
-        dtos.push(dto);
-        usedNames.add(dto.name);
-      }
-    }
-
-    return dtos;
+    // const dtos: CreateCinemaDto[] = [];
+    // const usedNames = new Set<string>();
+    // (await this.getAll()).map((film) => usedNames.add(film.name));
+    // while (dtos.length < count) {
+    //   const dto = new CreateCinemaDto({
+    //     name: faker.lorem.words({ min: 2, max: 4 }),
+    //     address: fakerRU.location.streetAddress(),
+    //     phone: "+7949" + faker.number.int({ min: 1000000, max: 9999999 }),
+    //     license: "№" + faker.number.int(),
+    //     licenseEnd: faker.date.past({ years: 100 }),
+    //     seats: Utils.GetRandomFromRange(5, 100),
+    //     online: Utils.GetRandomFromArray([true, false]),
+    //     typeId: Utils.GetRandomFromArray(typeIds),
+    //     districtId: Utils.GetRandomFromArray(districtIds),
+    //   });
+    //   if (!usedNames.has(dto.name)) {
+    //     dtos.push(dto);
+    //     usedNames.add(dto.name);
+    //   }
+    // }
+    //
+    // return dtos;
   }
 
   async symmetricInnerJoinWithDateSecond(date: Date) {
@@ -233,23 +244,23 @@ export class CinemaService {
   }
 
   async generate(count: number) {
-    const districtIds = (await this.districtsService.getAll()).map((district) => district.id);
-    const typeIds = (await this.cinemaTypesService.getAll()).map((type) => type.id);
-    if (districtIds.length < 1 || typeIds.length < 1)
-      throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
-    const promises = (await this.generateDTO(count, typeIds, districtIds)).map((dto) =>
-      this.create(dto),
-    );
-
-    try {
-      await Promise.all(promises);
-    } catch (error) {
-      throw new HttpException(
-        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return [];
+    // const districtIds = (await this.districtsService.getAll()).map((district) => district.id);
+    // const typeIds = (await this.cinemaTypesService.getAll()).map((type) => type.id);
+    // if (districtIds.length < 1 || typeIds.length < 1)
+    //   throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
+    // const promises = (await this.generateDTO(count, typeIds, districtIds)).map((dto) =>
+    //   this.create(dto),
+    // );
+    //
+    // try {
+    //   await Promise.all(promises);
+    // } catch (error) {
+    //   throw new HttpException(
+    //     `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+    //     HttpStatus.INTERNAL_SERVER_ERROR,
+    //   );
+    // }
+    //
+    // return [];
   }
 }

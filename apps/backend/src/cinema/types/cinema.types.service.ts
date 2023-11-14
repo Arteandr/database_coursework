@@ -24,12 +24,10 @@ export class CinemaTypesService {
   }
 
   async getAll() {
-    const cinemaTypes = await this.database.query<CinemaTypeEntity>(
-      `SELECT ct.id, ct.name
+    const cinemaTypes = await this.database.query(
+      `SELECT ct.id as "id", ct.name as "Название"
        FROM cinema_types as ct
-       ORDER BY id DESC`,
-      null,
-      CinemaTypeEntity,
+       ORDER BY ct.id DESC`,
     );
 
     return cinemaTypes;

@@ -61,8 +61,8 @@ export class StudiosController {
   @Get("/generate/:count")
   async generate(@Param("count", new ParseIntPipe()) count: number) {
     const films = await this.studiosService.generate(count);
-
-    return new CustomResponse(films);
+    //
+    // return new CustomResponse(films);
   }
 
   @Get(":id")
@@ -73,12 +73,18 @@ export class StudiosController {
   }
 
   @Put(":id")
-  update(@Param("id") id: string, @Body() updateStudioDto: UpdateStudioDto) {
-    return this.studiosService.update(+id, updateStudioDto);
+  async update(
+    @Param("id", new ParseIntPipe()) id: number,
+    @Body() updateStudioDto: UpdateStudioDto,
+  ) {
+    const response = await this.studiosService.update(id, updateStudioDto);
+
+    return new CustomResponse(response);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.studiosService.remove(+id);
+  async remove(@Param("id") id: number) {
+    const response = await this.studiosService.remove(id);
+    return response;
   }
 }

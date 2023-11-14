@@ -40,11 +40,10 @@ export class QualitiesService {
 
   async getAll() {
     const qualities = await this.database.query(
-      `SELECT *
-       FROM %t
-       ORDER BY id DESC`,
-      null,
-      QualityEntity,
+      `SELECT fq.id   as "id",
+              fq.name as "Название"
+       FROM film_qualities fq
+       ORDER BY fq.id DESC`,
     );
 
     return qualities;
