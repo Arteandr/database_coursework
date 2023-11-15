@@ -134,7 +134,6 @@ export class SessionsService {
         cinemaId: Utils.GetRandomFromArray(cinemaIds),
         typeId: Utils.GetRandomFromArray(typeIds),
       });
-      console.log(dto);
 
       dtos.push(dto);
     }
@@ -143,23 +142,23 @@ export class SessionsService {
   }
 
   async generate(count: number) {
-    //   // const filmIds = (await this.filmsService.getAll()).map((obj) => obj.id);
-    //   const cinemaIds = (await this.cinemasService.getAll()).map((obj) => obj.id);
-    //   const typeIds = (await this.typesService.getAll()).map((obj) => obj.id);
-    //   if (filmIds.length < 1 || cinemaIds.length < 1 || typeIds.length < 1)
-    //     throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
-    //   const promises = (await this.generateDTO(count, filmIds, cinemaIds, typeIds)).map((dto) =>
-    //     this.create(dto),
-    //   );
-    //
-    //   try {
-    //     await Promise.all(promises);
-    //   } catch (error) {
-    //     throw new HttpException(
-    //       `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
-    //       HttpStatus.INTERNAL_SERVER_ERROR,
-    //     );
-    //   }
-    //   return [];
+    const filmIds = Array.from({ length: 10208 - 10110 + 1 }, (_, i) => 10110 + i);
+    const cinemaIds = Array.from({ length: 990 - 1 + 1 }, (_, i) => 1 + i);
+    const typeIds = [1, 2, 4];
+    if (filmIds.length < 1 || cinemaIds.length < 1 || typeIds.length < 1)
+      throw new HttpException("Недостаточно данных для генерации", HttpStatus.BAD_REQUEST);
+    const promises = (await this.generateDTO(count, filmIds, cinemaIds, typeIds)).map((dto) =>
+      this.create(dto),
+    );
+
+    try {
+      await Promise.all(promises);
+    } catch (error) {
+      throw new HttpException(
+        `Произошла ошибка при генерации ${count} количества строк в таблице ${this.database.tableName}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return [];
   }
 }

@@ -51,16 +51,18 @@ export class FilmsController {
     return new CustomResponse(film);
   }
 
-  @Get("/symmetricForeignFirst/:id")
-  async getSymForeignFirst(@Param("id", new ParseIntPipe()) id: number) {
-    const response = await this.filmsService.symetricJoinWithAConditionByAForeignKey(id);
+  @Get("/symmetricForeignFirst/:name")
+  async getSymForeignFirst(@Param() params) {
+    const name: string = params["name"];
+    const response = await this.filmsService.symetricJoinWithAConditionByAForeignKey(name);
 
     return new CustomResponse(response);
   }
 
-  @Get("/symmetricForeignSecond/:id")
-  async getSymForeignSecond(@Param("id", new ParseIntPipe()) id: number) {
-    const response = await this.filmsService.symmetricWithACondByAForeignKeySecond(id);
+  @Get("/symmetricForeignSecond/:name")
+  async getSymForeignSecond(@Param() params) {
+    const name: string = params["name"];
+    const response = await this.filmsService.symmetricWithACondByAForeignKeySecond(name);
 
     return new CustomResponse(response);
   }
@@ -72,9 +74,10 @@ export class FilmsController {
     return new CustomResponse(response);
   }
 
-  @Get("/finalByIndex/:id")
-  async getFinalByIndex(@Param("id", new ParseIntPipe()) id: number) {
-    const response = await this.filmsService.finalByIndex(id);
+  @Get("/finalByIndex/:name")
+  async getFinalByIndex(@Param() params) {
+    const name = params["name"];
+    const response = await this.filmsService.finalByIndex(name);
 
     return new CustomResponse(response);
   }
